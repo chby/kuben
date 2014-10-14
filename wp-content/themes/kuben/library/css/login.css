@@ -1,0 +1,113 @@
+/******************************************************************
+Bones Custom Login Stylesheet
+
+Designed by Eddie Machado
+http://themble.com/bones
+hello@themble.com
+
+This stylesheet is loaded (if admin.php is setup in your 
+functions file) on the login page. This way you can style 
+the login page. It won't affect any other page, admin or front-end.
+
+For more info, check out the codex:
+http://codex.wordpress.org/Creating_Admin_Themes
+
+******************************************************************/
+
+
+body.login {} 
+
+
+#login {} /* the form box */
+
+/*
+This is the Wordpress logo in the admin area.
+You'll have to load your own images and mess
+with the width and height.
+*/
+h1 a {
+	background: transparent !important; /* make sure to replace this! */
+	width: 326px !important;
+	height: auto !important;
+	text-indent: 0  !important;
+	padding: 0 0 15px 0 !important;
+	margin: 0 !important;
+	display: block !important;
+	color: #333 !important;
+	font-weight: bold !important;
+    pointer-events: none;
+    cursor: default;
+}
+
+form {
+	margin-left: 8px !important;
+	padding: 26px 24px 46px !important;
+	font-weight: normal !important;
+	background: white !important;
+	border: 1px solid #E5E5E5 !important;
+	-webkit-border-radius: 3px !important;
+	 -khtml-border-radius: 3px !important;
+	   -moz-border-radius: 3px !important;
+			border-radius: 3px !important;
+	-webkit-box-shadow: none !important;
+	 -khtml-box-shadow: none !important;
+	   -moz-box-shadow: none !important;
+			box-shadow: none !important;
+}
+
+body form .input {
+    display: block !important;
+	font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif !important;
+	padding: 6px 12px !important;
+    line-height: 1.42857 !important;
+	font-size: 14px !important;
+    height: 34px !important;
+    width: 100% !important;
+	color: #555555 !important;
+	-webkit-border-radius: 4px !important;
+	   -moz-border-radius: 4px !important;
+			border-radius: 4px !important;
+	background-color: #ffffff !important;
+	border: 1px solid #cccccc !important;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;
+	   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;		        
+	   		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;
+	vertical-align: middle !important;
+}
+
+#wp-submit {
+	color: #FFF;
+	background: #428BCA;
+	border-color: #357EBD;
+	display: inline-block;
+	margin-bottom: 0px;
+	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857;
+	border-radius: 4px;
+	-moz-user-select: none;
+	height: auto;
+	box-shadow: none;
+}
+
+#wp-submit:hover, #wp-submit:focus, #wp-submit:active, #wp-submit.active {
+    color: #FFF;
+    background: #3276B1;
+    border-color: #285E8E;
+}
+
+p#backtoblog { display: none;}
+
+/*
+You'll have to override some of the default styles
+but since we're referencing the id, it should be easy.
+*/
+#wp-submit {} /* login button*/
+
