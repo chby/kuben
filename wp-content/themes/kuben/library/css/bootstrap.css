@@ -6847,3 +6847,34 @@ blockquote.pull-left {
 #fbuilder textarea.large {
 	height: 200px;
 }
+
+#fbuilder .pbSubmit {
+	color: #FFF;
+	background: #428BCA;
+	display: inline-block;
+	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid #357EBD;
+	white-space: nowrap;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857;
+	border-radius: 4px;
+	-moz-user-select: none;
+	height: auto;
+	box-shadow: none;
+	margin: 10px 0 30px 0;
+}
+
+#fbuilder .pbSubmit:hover, #fbuilder .pbSubmit:focus, #fbuilder .pbSubmit:active, #fbuilder .pbSubmit.active {
+    color: #FFF;
+    background: #3276B1;
+    border-color: #285E8E;
+}
+
+.cpefb_error.message {
+	display: none !important;
+}

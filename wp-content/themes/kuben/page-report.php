@@ -32,8 +32,17 @@ Template Name: Report
 					
 					</article> <!-- end article -->
 					
+					<?php if (isset($_GET['sent'])) { ?>
+						<div class="alert alert-success alert-dismissible" data-dismiss="alert" role="alert">
+							<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							Din rapport har skickats!
+						</div>
+					<?php } ?>
+					
 					<?php $contact_form = do_shortcode('[CONTACT_FORM_TO_EMAIL id="1"]'); ?>					
-					<?php echo str_replace("large","large form-control",$contact_form); ?>
+					<?php $contact_form = str_replace("large","large form-control",$contact_form); ?>
+					<?php $contact_form = str_replace('class="cp_subbtn"','class="cp_subbtn btn btn-primary"',$contact_form); ?>
+					<?php echo $contact_form; ?>
 					
 					
 					<?php //comments_template('',true); ?>

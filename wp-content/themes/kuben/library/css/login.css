@@ -78,7 +78,6 @@ body form .input {
 #wp-submit {
 	color: #FFF;
 	background: #428BCA;
-	border-color: #357EBD;
 	display: inline-block;
 	margin-bottom: 0px;
 	font-weight: normal;
@@ -86,7 +85,7 @@ body form .input {
 	vertical-align: middle;
 	cursor: pointer;
 	background-image: none;
-	border: 1px solid transparent;
+	border: 1px solid #357EBD;
 	white-space: nowrap;
 	padding: 6px 12px;
 	font-size: 14px;
