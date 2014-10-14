@@ -44,6 +44,26 @@ Template Name: Report
 					<?php $contact_form = str_replace('class="cp_subbtn"','class="cp_subbtn btn btn-primary"',$contact_form); ?>
 					<?php echo $contact_form; ?>
 					
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							var form = jQuery('form.cpp_form');
+							setTimeout(function() {
+								form.find(".fields").each(function() {
+									jQuery(this).addClass('form-group');
+									jQuery(this).find('label').addClass('control-label');
+								});
+							}, 100);
+					
+							form.submit(function() {
+								setTimeout(function() {
+									form.find(".field.cpefb_error").each(function() {
+										jQuery(this).parents(".fields").addClass("has-error has-feedback");
+									});
+								}, 100);
+							});
+						});
+					</script>
+					
 					
 					<?php //comments_template('',true); ?>
 					
