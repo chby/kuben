@@ -534,8 +534,15 @@ function get_current_user_role() {
 	return isset($role) ? $role : false;
 }
     
+function remove_menu_pages_for_director() {
+	remove_menu_page('cp_contactformtoemail');
+	remove_menu_page('tools.php');
+}
+
 if (get_current_user_role() == "parent") {
 	add_filter('show_admin_bar', '__return_false');
+} else if (get_current_user_role() == "director" && is_admin()) {
+	add_action('admin_menu', 'remove_menu_pages_for_director');
 }
 
 function admin_default_page() {
