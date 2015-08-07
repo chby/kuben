@@ -468,6 +468,10 @@ if( !function_exists("theme_styles") ) {
         // For child themes
         wp_register_style( 'wpbs-style', get_stylesheet_directory_uri() . '/style.css', array(), '1.0', 'all' );
         wp_enqueue_style( 'wpbs-style' );
+		
+
+		wp_register_style('book-duty-days-css', get_template_directory_uri() . '/library/css/book-duty-days.css', array(), '1.0', 'all');
+		wp_enqueue_style('book-duty-days-css');
     }
 }
 add_action( 'wp_enqueue_scripts', 'theme_styles' );
@@ -570,5 +574,7 @@ if (function_exists('register_nav_menu')) {
 	
 	add_filter( 'wp_nav_menu_items', 'add_login_out_item_to_menu', 50, 2 );
 }
+
+require_once('book-duty-days.php');
 
 ?>

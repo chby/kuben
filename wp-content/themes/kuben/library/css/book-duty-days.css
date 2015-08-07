@@ -1,0 +1,50 @@
+table.book-duty-days-table {
+	width: 100%;
+} 
+
+table.book-duty-days-table tr:first-child td {
+	border-top: 1px solid #eeeeee;
+} 
+
+table.book-duty-days-table tr td {
+	border-bottom: 1px solid #eeeeee;
+	background-color: #fcfcfc;
+	height: 30px;
+	padding: 0 20px 0 0;
+}
+
+table.book-duty-days-table tr {
+	cursor: pointer;
+}
+
+table.book-duty-days-table tr:hover td {
+	background-color: #f9f9f9;	
+}
+
+table.book-duty-days-table tr td.input {
+	width: 30px;
+	padding: 0;
+}
+
+table.book-duty-days-table tr td.input input {
+	margin: 4px 0 0 8px;
+}  
+
+table.book-duty-days-table tr.checked td {
+	background-color: #eff7ea;
+	border-bottom: 1px solid #d8f1cb;
+}
+
+table.book-duty-days-table tr.booked td {
+	background-color: #f9f9e4;
+	border-bottom: 1px solid #f1f1cb;
+}
+
+table.book-duty-days-table tr.weekend, table.book-duty-days-table tr.booked {
+	cursor: default;
+}
+
+table.book-duty-days-table tr.weekend td {
+	color: #dd3737;
+	background-color: #f5f5f5 !important;
+}
