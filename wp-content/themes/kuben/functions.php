@@ -541,6 +541,7 @@ function get_current_user_role() {
 function remove_menu_pages_for_director() {
 	remove_menu_page('cp_contactformtoemail');
 	remove_menu_page('tools.php');
+	remove_menu_page('options-general.php');
 }
 
 if (get_current_user_role() == "parent") {

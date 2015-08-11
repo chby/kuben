@@ -49,9 +49,11 @@ if (!empty($_POST['action'])) {
 						$users = get_users(array('meta_key' => 'booked_duty_days'));
 						foreach ($users as $user) { 
 							$data = get_userdata($user->ID);
-							$user_booked_duty_days[$user->ID] = array('booked_duty_days' => get_user_meta($user->ID, 'booked_duty_days', true), 'name' => $data->first_name." ".$data->last_name);
-							$booked_duty_days = array_merge($booked_duty_days, $user_booked_duty_days[$user->ID]['booked_duty_days']); 
-						} 		
+							$meta = get_user_meta($user->ID, 'booked_duty_days', true);
+							$user_booked_duty_days[$user->ID] = array('booked_duty_days' => (is_array($meta) ? $meta : array()), 'name' => $data->first_name." ".$data->last_name);
+							$booked_duty_days = array_merge($booked_duty_days, $user_booked_duty_days[$user->ID]['booked_duty_days']);
+						} 	
+											
 					?>
 
 					<div class="alert alert-success" role="alert">
