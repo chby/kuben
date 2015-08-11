@@ -1,1 +1,1 @@
-web: vendor/bin/heroku-hhvm-nginx -C nginx_app.conf
+web: vendor/bin/heroku-php-apache2
