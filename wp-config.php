@@ -17,7 +17,7 @@
 // ** MySQL-inställningar - MySQL-uppgifter får du från ditt webbhotell ** //
 /** Namnet på databasen du vill använda för WordPress */
 
-$url = parse_url(getenv('DATABASE_URL') ? getenv('DATABASE_URL') : getenv('CLEARDB_DATABASE_URL'));
+$url = (($_SERVER['HTTP_HOST'] == "kuben.dev:8888") ? parse_url('mysql://root:batman@localhost/kuben') : parse_url(getenv('CLEARDB_DATABASE_URL')));
 
 define('DB_NAME', trim($url['path'], '/'));
 
