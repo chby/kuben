@@ -16,16 +16,19 @@
 
 // ** MySQL-inställningar - MySQL-uppgifter får du från ditt webbhotell ** //
 /** Namnet på databasen du vill använda för WordPress */
-define('DB_NAME', 'kuben');
+
+$url = parse_url(getenv('DATABASE_URL') ? getenv('DATABASE_URL') : getenv('CLEARDB_DATABASE_URL'));
+
+define('DB_NAME', trim($url['path'], '/'));
 
 /** MySQL-databasens användarnamn */
-define('DB_USER', 'root');
+define('DB_USER', $url['user']);
 
 /** MySQL-databasens lösenord */
-define('DB_PASSWORD', 'batman');
+define('DB_PASSWORD', $url['pass']);
 
 /** MySQL-server */
-define('DB_HOST', 'localhost');
+define('DB_HOST', $url['host']);
 
 /** Teckenkodning för tabellerna i databasen. */
 define('DB_CHARSET', 'utf8');
@@ -42,14 +45,14 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         '@E<MH6V19hVL]qW |cQ4%*L,y?>Zz(S3udW9}La(|XvLogv;%RseMn>t=1zxIhWC');
-define('SECURE_AUTH_KEY',  '?+k>xyf|CEnT0dEmk7r%^]ZA.W&-t1O%Yb@,dNjOn#bTz<D)w)|us#9w.{U.DKo;');
-define('LOGGED_IN_KEY',    '0Pa^][Ahl33jY4-|vT--s^pFW@`vrhn!2d@f5jW{{ae,K,Y&;ypLkF<1)O}u$pqX');
-define('NONCE_KEY',        'J+VcD$o21 P)<$CFDs>}u?VithO,7nF[~G?e+y86c:4[AR|*%yt,Oq=M }Bs^H9V');
-define('AUTH_SALT',        'KiTw1j(wC)}?mC!2|Qzo(mZa3/:0]hu?U!XfR@f1G m<G%ka|fI0Av+YT>Z-v)vX');
-define('SECURE_AUTH_SALT', 'wC0r^gFU&`T&bg4P%Q+9VMyE70+XB8 LGz~bp;XZlT|da(Te^{M0(bY+X@Abue{w');
-define('LOGGED_IN_SALT',   'QJ#J; ~NeqYk#pt0QM}[wxh8m%C-aB#+Y FjoR;mZssAioPS]TxU+L/8+mXx}iAW');
-define('NONCE_SALT',       'GAg.ZF!Z4!yt%P.c7EAMTd|~7(`- 0Vvo6}Ohe,fU*/T}U$Gp`Mb2$Rlf%b;^c9a');
+define('AUTH_KEY',         getenv('AUTH_KEY'));
+define('SECURE_AUTH_KEY',  getenv('SECURE_AUTH_KEY'));
+define('LOGGED_IN_KEY',    getenv('LOGGED_IN_KEY'));
+define('NONCE_KEY',        getenv('NONCE_KEY'));
+define('AUTH_SALT',        getenv('AUTH_SALT'));
+define('SECURE_AUTH_SALT', getenv('SECURE_AUTH_SALT'));
+define('LOGGED_IN_SALT',   getenv('LOGGED_IN_SALT'));
+define('NONCE_SALT',       getenv('NONCE_SALT'));
 
 /**#@-*/
 
