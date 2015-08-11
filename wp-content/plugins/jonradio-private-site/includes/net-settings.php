@@ -52,7 +52,7 @@ function jr_ps_network_settings_page() {
 	If you would prefer, when this plugin is Network Activated,
 	to have a single set of Settings that would apply to all Sites in a WordPress network,
 	and/or be able to view and change all of the Settings for all Sites from this one Network Settings page that you are now viewing,
-	<a href="http://jonradio.com/contact-us/">please contact the Plugin author</a>
+	<a href="http://zatzlabs.com/contact-us/">please contact the Plugin author</a>
 	and this will be added to a future version of this plugin if there is enough interest expressed by webmasters such as you.
 	</p>
 	<?php

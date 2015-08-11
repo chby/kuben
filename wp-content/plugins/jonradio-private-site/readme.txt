@@ -1,16 +1,18 @@
-=== jonradio Private Site ===
-Contributors: jonradio
-Donate link: http://jonradio.com/plugins
+=== My Private Site ===
+Contributors: dgewirtz
+Donate link: http://zatzlabs.com/lab-notes/
 Tags: login, visibility, private, security, plugin, pages, page, posts, post
 Requires at least: 3.0
-Tested up to: 4.0
-Stable tag: 2.11.4
+Tested up to: 4.2
+Stable tag: 2.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Create a Private Site visible only to your registered users.
 
 == Description ==
+
+*Formerly: "jonradio Private Site"*
 
 Allows the Administrator to restrict a WordPress-based web site to viewing only by registered users who are logged on.  Any attempt, by anyone not logged, to view any Page, Post or other part of the site will display a WordPress login screen.
 
@@ -39,6 +41,11 @@ If a WordPress Network is defined, the plugin can be activated individually for 
 
 Yes, there are other plugins that hide some or all WordPress content for any site visitor who is not logged on.  But when I was searching for a solution for one of the web sites I support, I decided to "write my own" because I knew how it worked and felt comfortable that there would be no way for anyone not logged in to view the site, including Search Engines.
 
+> <strong>Adoption Notice</strong><br>
+> This plugin was recently adopted by David Gewirtz and ongoing support and updates will continue. Feel free to visit [David's Lab Notes](http://zatzlabs.com/lab-notes/) for additional details and to sign up for emailed news updates.
+
+Special thanks to Jon 'jonradio' Pearkins for creating the plugin and making adoption possible.
+
 == Installation ==
 
 This section describes how to install the *jonradio Private Site* plugin and get it working.
@@ -60,13 +67,26 @@ This problem has been observed when the URL of the Custom Login page is a WordPr
 
 Whenever you change your WordPress Permalinks (Settings-Permalinks in Admin panels), this *jonradio Private Site* plugin does **not** automatically change any URLs you have entered in the plugin's Settings.  You will therefore want to make changes to URLs in the plugin's Settings whenever you change Permalinks.
 
-= Why is User Submenu? setting greyed out? =
+= Why has the plugin's Settings entry disappeared from the WordPress Admin Users submenu? =
 
-This setting controls whether the plugin's settings are accessible from the Users submenu of the WordPress Admin panels.  For security reasons, it can only be used when the plugin's settings are accessed from the Settings submenu.
-
-A Capability of manage_options is required to access the plugin's settings from the Settings submenu.  A Capability of manage_users is required to access the plugin's settings from the Users submenu.
+At user request, to reduce clutter.
 
 == Changelog ==
+
+= 2.14 =
+* Force login at 'get_header' instead of 'template_redirect' Action to be compatible with wpengine.com hosting
+* Allow Custom Login page that is NOT on the current WordPress site, and clean up Settings page validation of related fields
+* Fix double display of Error Messages on Settings page
+
+= 2.13 =
+* Remove Plugin's entry on Users submenu on WordPress Admin panels
+* Remove associated Setting, which determined whether Users submenu entry existed
+
+= 2.12 =
+* Wait until Pretty Permalinks applied before deciding whether to force a login
+* Add an Override Advanced Setting with Warnings on Usage, to allow Landing Location and Custom Login to both be specified.
+* Correct coding error that allowed Landing Location with Custom Login, a potential Redirection error
+* Fix Error Log warning on [mb]strpos Offset parameter
 
 = 2.11.4 =
 * Use Custom Login setting, if present, to redirect failed login attempts with blank username and/or password
@@ -147,8 +167,14 @@ A Capability of manage_options is required to access the plugin's settings from 
 
 == Upgrade Notice ==
 
-= 2.11.3 =
-Correct Blank Username/Password when Custom Login selected
+= 2.14 =
+Support wpengine.com hosting and off-site Login pages
+
+= 2.13 =
+Reduce WordPress Admin panels Menu clutter by removing plugin Settings from Users submenu
+
+= 2.12 =
+Correct handling of www. in a URL by waiting until Pretty Permalinks applied before deciding whether to force Login
 
 = 2.11.3 =
 Correct Failed Logins when Custom Login selected

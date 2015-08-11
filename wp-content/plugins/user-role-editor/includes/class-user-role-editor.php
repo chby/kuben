@@ -1,6 +1,6 @@
 <?php
 /*
- * main class of User Role Editor WordPress plugin
+ * Main class of User Role Editor WordPress plugin
  * Author: Vladimir Garagulya
  * Author email: support@role-editor.com
  * Author URI: https://www.role-editor.com
@@ -9,8 +9,11 @@
 */
 
 class User_Role_Editor {
-    // common code staff, including options data processor
+    // plugin specific library object: common code stuff, including options data processor
     protected $lib = null;
+    
+    // work with user multiple roles class
+    protected $user_other_roles = null;
     
     // plugin's Settings page reference, we've got it from add_options_pages() call
     protected $setting_page_hook = null;
@@ -25,8 +28,9 @@ class User_Role_Editor {
      */
     function __construct($library) {
 
-        // get plugin specific library object
-        $this->lib = $library;        
+        $this->lib = $library;               
+        $this->user_other_roles = new URE_User_Other_Roles($this->lib);
+        
         if ($this->lib->is_pro()) {
          $this->ure_hook_suffixes = array('settings_page_settings-user-role-editor-pro', 'users_page_users-user-role-editor-pro');         
         } else {
@@ -39,7 +43,7 @@ class User_Role_Editor {
         // deactivation action
         register_deactivation_hook(URE_PLUGIN_FULL_PATH, array($this, 'cleanup'));
         		
-        // Who may use this plugin
+        // Who can use this plugin
         $this->key_capability = $this->lib->get_key_capability();
         
         if ($this->lib->multisite) {
@@ -68,12 +72,22 @@ class User_Role_Editor {
 
         // add a Settings link in the installed plugins page
         add_filter('plugin_action_links_'. URE_PLUGIN_BASE_NAME, array($this, 'plugin_action_links'), 10, 1);
-
-        add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);
+        add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);    
         
     }
     // end of __construct()
 
+    
+    /**
+     * True - if it's an instance of Pro version, false - for free version
+     * @return boolean
+     */    
+    public function is_pro() {
+        
+        return $this->lib->is_pro();
+    }
+    // end of is_pro()
+    
     
   /**
    * Plugin initialization
@@ -81,7 +95,7 @@ class User_Role_Editor {
    */
   public function plugin_init() {
 
-    global $current_user;
+    global $current_user, $pagenow;
 
     if (!empty($current_user->ID)) {
       $user_id = $current_user->ID;
@@ -89,9 +103,10 @@ class User_Role_Editor {
       $user_id = 0;
     }
 
+    $supress_protection = apply_filters('ure_supress_administrators_protection', false);
     // these filters and actions should prevent editing users with administrator role
     // by other users with 'edit_users' capability
-    if (!$this->lib->user_is_admin($user_id)) {
+    if (!$supress_protection && !$this->lib->user_is_admin($user_id)) {
       // Exclude administrator role from edit list.
       add_filter('editable_roles', array($this, 'exclude_admin_role' ) );
       // prohibit any actions with user who has Administrator role
@@ -101,27 +116,25 @@ class User_Role_Editor {
       // do not show 'Administrator (s)' view above users list
       add_filter('views_users',  array($this, 'exclude_admins_view' ) );            
     }
-    
+        
     add_action( 'admin_enqueue_scripts', array($this, 'admin_load_js' ) );
-    add_action( 'user_row_actions', array($this, 'user_row'), 10, 2 );
-    add_action( 'edit_user_profile', array($this, 'edit_user_profile'), 10, 2 );
-    add_filter( 'manage_users_columns', array($this, 'user_role_column'), 10, 1 );
-    add_filter( 'manage_users_custom_column', array($this, 'user_role_row'), 10, 3 );
-    add_action( 'profile_update', array($this, 'user_profile_update'), 10 );
+    add_action( 'user_row_actions', array($this, 'user_row'), 10, 2 );                        
     add_filter( 'all_plugins', array($this, 'exclude_from_plugins_list' ) );
+
+    $this->user_other_roles->set_hooks();
     
     if ($this->lib->multisite) {          
-        add_action( 'wpmu_activate_user', array($this, 'add_other_default_roles'), 10, 1 );
-        
         $allow_edit_users_to_not_super_admin = $this->lib->get_option('allow_edit_users_to_not_super_admin', 0);
         if ($allow_edit_users_to_not_super_admin) {
             add_filter( 'map_meta_cap', array($this, 'restore_users_edit_caps'), 1, 4 );
             remove_all_filters( 'enable_edit_any_user_configuration' );
             add_filter( 'enable_edit_any_user_configuration', '__return_true');
             add_filter( 'admin_head', array($this, 'edit_user_permission_check'), 1, 4 );
+            if ($pagenow=='user-new.php') {
+                add_filter( 'site_option_site_admins', array($this, 'allow_add_user_as_superadmin') );
+            }
         }
-    } else {
-        add_action( 'user_register', array($this, 'add_other_default_roles'), 10, 1 );
+    } else {        
         $count_users_without_role = $this->lib->get_option('count_users_without_role', 0);
         if ($count_users_without_role) {
             add_action( 'restrict_manage_users', array($this, 'move_users_from_no_role_button') );
@@ -134,28 +147,55 @@ class User_Role_Editor {
 
   }
   // end of plugin_init()
-    
+  
+  
+  /**
+   * Allow non-superadmin user to add/create users to the site as superadmin does.
+   * Include current user to the list of superadmins - for the user-new.php page only, and 
+   * if user really can create_users and promote_users
+   * @global string $page
+   * @param array $site_admins
+   * @return array
+   */
+  public function allow_add_user_as_superadmin($site_admins) {
+  
+      global $pagenow, $current_user;
+      
+      if ($pagenow!=='user-new.php') {
+          return $site_admins;
+      }
+      
+      // Check if current user really can create and promote users
+      remove_filter('site_option_site_admins', array($this, 'allow_add_user_as_superadmin'));
+      $can_add_user = current_user_can('create_users') && current_user_can('promote_users');
+      add_filter('site_option_site_admins', array($this, 'allow_add_user_as_superadmin'));
+      
+      if (!$can_add_user) {
+          return $site_admins; // no help in this case
+      }
+              
+      if (!in_array($current_user->user_login, $site_admins)) {
+        $site_admins[] = $current_user->user_login;
+      }
+      
+      return $site_admins;
+      
+  }
+  // end of allow_add_user_as_superadmin()
+  
   
   public function move_users_from_no_role_button() {
-      
-      global $wpdb;
-      
+                  
       if ( stripos($_SERVER['REQUEST_URI'], 'wp-admin/users.php')===false ) {
             return;
       }
       
-      $id = get_current_blog_id();
-      $blog_prefix = $wpdb->get_blog_prefix($id);
-      $query = "select count(ID) from {$wpdb->users} users
-                    where not exists (select user_id from {$wpdb->usermeta}
-                                          where user_id=users.ID and meta_key='{$blog_prefix}capabilities') or
-                          exists (select user_id from {$wpdb->usermeta}
-                                    where user_id=users.ID and meta_key='{$blog_prefix}capabilities' and meta_value='a:0:{}')                ;";
-      $users_count = $wpdb->get_var($query);
-      if ($users_count>0) {
+      $assign_role = $this->lib->get_assign_role();
+      $users_quant = $assign_role->count_users_without_role();      
+      if ($users_quant>0) {
 ?>          
         &nbsp;&nbsp;<input type="button" name="move_from_no_role" id="move_from_no_role" class="button"
-                        value="Without role (<?php echo $users_count;?>)" onclick="ure_move_users_from_no_role_dialog()">
+                        value="Without role (<?php echo $users_quant;?>)" onclick="ure_move_users_from_no_role_dialog()">
         <div id="move_from_no_role_dialog" class="ure-dialog">
             <div id="move_from_no_role_content" style="padding: 10px;">
                 To: <select name="ure_new_role" id="ure_new_role">
@@ -199,27 +239,6 @@ class User_Role_Editor {
       
   }
   // end of add_js_to_users_page()
-  
-  
-  public function add_other_default_roles($user_id) {
-      
-      if (empty($user_id)) {
-          return;
-      }
-      $user = get_user_by('id', $user_id);
-      if (empty($user->ID)) {
-          return;
-      }
-      $other_default_roles = $this->lib->get_option('other_default_roles', array());
-      if (count($other_default_roles)==0) {
-          return;
-      }
-      foreach($other_default_roles as $role) {
-          $user->add_role($role);
-      }
-      
-  }
-  // end of add_other_default_roles()
   
   
   /**
@@ -319,9 +338,8 @@ class User_Role_Editor {
      * @param string $name
      * @return array
      */
-    public function not_edit_admin($allcaps, $caps, $name) 
-    {
-
+    public function not_edit_admin($allcaps, $caps, $name) {
+        
         $user_keys = array('user_id', 'user');
         foreach ($user_keys as $user_key) {
             $access_deny = false;
@@ -464,17 +482,23 @@ class User_Role_Editor {
 
   
   /** 
-   * Filter out URE plugin from not superadmin users
+   * Filter out URE plugin from not admin users to prevent its not authorized deactivation
    * @param type array $plugins plugins list
    * @return type array $plugins updated plugins list
    */
-  public function exclude_from_plugins_list($plugins) {
-        global $current_user;
+  public function exclude_from_plugins_list($plugins) {        
 
-        $ure_key_capability = $this->lib->get_key_capability();
         // if multi-site, then allow plugin activation for network superadmins and, if that's specially defined, - for single site administrators too    
-        if ($this->lib->user_has_capability($current_user, $ure_key_capability)) {
-            return $plugins;
+        if ($this->lib->multisite) { 
+            if (is_super_admin() || $this->lib->user_is_admin()) {
+                return $plugins;
+            }
+        } else {    
+// is_super_admin() defines superadmin for not multisite as user who can 'delete_users' which I don't like. 
+// So let's check if user has 'administrator' role better.
+            if (current_user_can('administrator') || $this->lib->user_is_admin()) {
+                return $plugins;
+            }
         }
 
         // exclude URE from plugins list
@@ -494,8 +518,7 @@ class User_Role_Editor {
      * Load plugin translation files - linked to the 'plugins_loaded' action
      * 
      */
-    function load_translation() 
-    {
+    function load_translation() {
 
         load_plugin_textdomain('ure', '', dirname( plugin_basename( URE_PLUGIN_FULL_PATH ) ) .'/lang');
         
@@ -544,26 +567,28 @@ class User_Role_Editor {
         $screen_help = new Ure_Screen_Help();
         $screen->add_help_tab( array(
             'id'	=> 'general',
-            'title'	=> esc_html__('General'),
+            'title'	=> esc_html__('General', 'ure'),
             'content'	=> $screen_help->get_settings_help('general')
             ));
-        if ($this->lib->pro || !$this->lib->multisite) {
+        if ($this->lib->is_pro() || !$this->lib->multisite) {
             $screen->add_help_tab( array(
                 'id'	=> 'additional_modules',
-                'title'	=> esc_html__('Additional Modules'),
+                'title'	=> esc_html__('Additional Modules', 'ure'),
                 'content'	=> $screen_help->get_settings_help('additional_modules')
                 ));
         }
         $screen->add_help_tab( array(
             'id'	=> 'default_roles',
-            'title'	=> esc_html__('Default Roles'),
+            'title'	=> esc_html__('Default Roles', 'ure'),
             'content'	=> $screen_help->get_settings_help('default_roles')
             ));
-        $screen->add_help_tab( array(
-            'id'	=> 'multisite',
-            'title'	=> esc_html__('Multisite'),
-            'content'	=> $screen_help->get_settings_help('multisite')
-            ));
+        if ($this->lib->multisite) {
+            $screen->add_help_tab( array(
+                'id'	=> 'multisite',
+                'title'	=> esc_html__('Multisite', 'ure'),
+                'content'	=> $screen_help->get_settings_help('multisite')
+                ));
+        }
     }
     // end of settings_screen_configure()
     
@@ -583,10 +608,11 @@ class User_Role_Editor {
         }
 
         if ( !$this->lib->multisite || ($this->lib->multisite && !$this->lib->active_for_network) ) {
+            $settings_capability = $this->lib->get_settings_capability();
             $this->settings_page_hook = add_options_page(
                     $translated_title,
                     $translated_title,
-                    $this->key_capability, 
+                    $settings_capability, 
                     'settings-' . URE_PLUGIN_FILE, 
                     array($this, 'settings'));
             add_action( 'load-'.$this->settings_page_hook, array($this,'settings_screen_configure') );
@@ -651,6 +677,9 @@ class User_Role_Editor {
 
         $show_deprecated_caps = $this->lib->get_request_var('show_deprecated_caps', 'checkbox');
         $this->lib->put_option('ure_show_deprecated_caps', $show_deprecated_caps);       
+        
+        $edit_user_caps = $this->lib->get_request_var('edit_user_caps', 'checkbox');
+        $this->lib->put_option('edit_user_caps', $edit_user_caps);       
         
         do_action('ure_settings_update1');
 
@@ -724,8 +753,9 @@ class User_Role_Editor {
     
 
     public function settings() {
-        if (!current_user_can($this->key_capability)) {
-            esc_html__( 'You do not have sufficient permissions to manage options for User Role Editor.', 'ure' );
+        $settings_capability = $this->lib->get_settings_capability();
+        if (!current_user_can($settings_capability)) {
+            wp_die(esc_html__( 'You do not have sufficient permissions to manage options for User Role Editor.', 'ure' ));
         }
         $action = $this->get_settings_action();
         switch ($action) {
@@ -752,6 +782,7 @@ class User_Role_Editor {
         }
         $caps_readable = $this->lib->get_option('ure_caps_readable', 0);
         $show_deprecated_caps = $this->lib->get_option('ure_show_deprecated_caps', 0);
+        $edit_user_caps = $this->lib->get_option('edit_user_caps', 1);
                 
         if ($this->lib->multisite) {
             $allow_edit_users_to_not_super_admin = $this->lib->get_option('allow_edit_users_to_not_super_admin', 0);
@@ -795,16 +826,8 @@ class User_Role_Editor {
     // call roles editor page
     public function edit_roles() {
 
-        global $current_user;
-
-        if (!empty($current_user)) {
-            $user_id = $current_user->ID;
-        } else {
-            $user_id = false;
-        }
-        $ure_key_capability = $this->lib->get_key_capability();
-        if (!$this->lib->user_has_capability($current_user, $ure_key_capability)) {
-            die(esc_html__('Insufficient permissions to work with User Role Editor', 'ure'));
+        if (!current_user_can($this->key_capability)) {
+            wp_die(esc_html__('Insufficient permissions to work with User Role Editor', 'ure'));
         }
 
         $this->lib->editor();
@@ -821,237 +844,98 @@ class User_Role_Editor {
 		
 	}
 
-	/**
-	 *  execute on plugin activation
-	 */
-	function setup() {
-		
-		$this->convert_option('ure_caps_readable');				
-		$this->convert_option('ure_show_deprecated_caps');
-		$this->convert_option('ure_hide_pro_banner');		
-		$this->lib->flush_options();
-		
-		$this->lib->make_roles_backup();
-
-		do_action('ure_activation');
-  
-	}
-	// end of setup()
-
- 
     /**
-     * Unload WP TechGoStore theme JS and CSS to exclude compatibility issues with URE
+     *  execute on plugin activation
      */
-    protected function unload_techgostore($hook_suffix) {
-                
-        if (!defined('THEME_SLUG') || THEME_SLUG!=='techgo_') {
-            return;
-        }  
-        
-        if ( !in_array($hook_suffix, $this->ure_hook_suffixes) && !in_array($hook_suffix, array('users.php', 'profile.php')) ) {
-            return;
-        }
-        wp_deregister_script('jqueryform');
-        wp_deregister_script('tab');
-        wp_deregister_script('shortcode_js');
-        wp_deregister_script('fancybox_js');
-        wp_deregister_script('bootstrap-colorpicker');
-        wp_deregister_script('logo_upload');
-        wp_deregister_script('js_wd_menu_backend');
-        
-        wp_deregister_style('config_css');
-        wp_deregister_style('fancybox_css');
-        wp_deregister_style('colorpicker');
-        wp_deregister_style('font-awesome');
-        wp_deregister_style('css_wd_menu_backend');
+    function setup() {
+
+        $this->convert_option('ure_caps_readable');
+        $this->convert_option('ure_show_deprecated_caps');
+        $this->convert_option('ure_hide_pro_banner');
+        $this->lib->flush_options();
+
+        $this->lib->make_roles_backup();
+        $this->lib->init_ure_caps();
+
+
+        do_action('ure_activation');
     }
+    // end of setup()
+            
 
-// end of unload_techgostore()
-
-/**
-  * Load plugin javascript stuff
-  * 
-  * @param string $hook_suffix
-  */
- public function admin_load_js($hook_suffix){
-              
-     $this->unload_techgostore($hook_suffix);
-	if (in_array($hook_suffix, $this->ure_hook_suffixes)) {
-    wp_enqueue_script('jquery-ui-dialog', false, array('jquery-ui-core','jquery-ui-button', 'jquery') );
-    wp_enqueue_script('jquery-ui-tabs', false, array('jquery-ui-core', 'jquery') );
-    wp_register_script( 'ure-js', plugins_url( '/js/ure-js.js', URE_PLUGIN_FULL_PATH ) );
-    wp_enqueue_script ( 'ure-js' );
-    wp_localize_script( 'ure-js', 'ure_data', array(
-        'wp_nonce' => wp_create_nonce('user-role-editor'),
-        'page_url' => URE_WP_ADMIN_URL . URE_PARENT .'?page=users-'.URE_PLUGIN_FILE,  
-        'is_multisite' => is_multisite() ? 1 : 0,  
-        'select_all' => esc_html__('Select All', 'ure'),
-        'unselect_all' => esc_html__('Unselect All', 'ure'),
-        'reverse' => esc_html__('Reverse', 'ure'),  
-        'update' => esc_html__('Update', 'ure'),
-        'confirm_submit' => esc_html__('Please confirm permissions update', 'ure'),
-        'add_new_role_title' => esc_html__('Add New Role', 'ure'),
-        'rename_role_title' => esc_html__('Rename Role', 'ure'),
-        'role_name_required' => esc_html__(' Role name (ID) can not be empty!', 'ure'),  
-        'role_name_valid_chars' => esc_html__(' Role name (ID) must contain latin characters, digits, hyphens or underscore only!', 'ure'), 
-        'numeric_role_name_prohibited' => esc_html__(' WordPress does not support numeric Role name (ID). Add latin characters to it.', 'ure'), 
-        'add_role' => esc_html__('Add Role', 'ure'),
-        'rename_role' => esc_html__('Rename Role', 'ure'),
-        'delete_role' => esc_html__('Delete Role', 'ure'),
-        'cancel' =>  esc_html__('Cancel', 'ure'),  
-        'add_capability' => esc_html__('Add Capability', 'ure'),
-        'delete_capability' => esc_html__('Delete Capability', 'ure'),
-        'reset' => esc_html__('Reset', 'ure'),  
-        'reset_warning' => esc_html__('DANGER! Resetting will restore default settings from WordPress Core.','ure')."\n\n".
-                           esc_html__('If any plugins have changed capabilities in any way upon installation (such as S2Member, WooCommerce, and many more), those capabilities will be DELETED!', 'ure')."\n\n" .
-                           esc_html__('For more information on how to undo changes and restore plugin capabilities go to', 'ure')."\n".
-                           'http://role-editor.com/how-to-restore-deleted-wordpress-user-roles/'."\n\n".
-                           esc_html__('Continue?', 'ure'),  
-        'default_role' => esc_html__('Default Role', 'ure'),    
-        'set_new_default_role' => esc_html__('Set New Default Role', 'ure'),
-        'delete_capability' => esc_html__('Delete Capability', 'ure'),
-        'delete_capability_warning' => esc_html__('Warning! Be careful - removing critical capability could crash some plugin or other custom code', 'ure'),
-        'capability_name_required' => esc_html__(' Capability name (ID) can not be empty!', 'ure'),    
-        'capability_name_valid_chars' => esc_html__(' Capability name (ID) must contain latin characters, digits, hyphens or underscore only!', 'ure'),    
-    ) );
-    // load additional JS stuff for Pro version, if exists
-    do_action('ure_load_js');
-    
-	}
-  
-}
-// end of admin_load_js()
-
-
-    protected function is_user_profile_extention_allowed() {
-        // Check if we are not at the network admin center
-        $result = stripos($_SERVER['REQUEST_URI'], 'network/user-edit.php') == false;
-        
-        return $result;
-    }
-    // end of is_user_profile_extention_allowed()
-
-
-    public function edit_user_profile($user) {
-
-        global $current_user;
-        
-        if (!$this->is_user_profile_extention_allowed()) {  
-            return;
-        }
-        if (!$this->lib->user_is_admin($current_user->ID)) {
-            return;
-        }
-?>
-        <h3><?php _e('User Role Editor', 'ure'); ?></h3>
-        <table class="form-table">
-        		<tr>
-        			<th scope="row"><?php _e('Other Roles', 'ure'); ?></th>
-        			<td>
-        <?php
-        $roles = $this->lib->other_user_roles($user);
-        if (is_array($roles) && count($roles) > 0) {
-            foreach ($roles as $role) {
-                echo '<input type="hidden" name="ure_other_roles[]" value="' . $role . '" />';
-            }
-        }
-        $output = $this->lib->roles_text($roles);
-        echo $output . '&nbsp;&nbsp;&gt;&gt;&nbsp;<a href="' . wp_nonce_url("users.php?page=users-".URE_PLUGIN_FILE."&object=user&amp;user_id={$user->ID}", "ure_user_{$user->ID}") . '">' . 
-                esc_html__('Edit', 'ure') . '</a>';
-        ?>
-        			</td>
-        		</tr>
-        </table>		
-        <?php
-    }
-    // end of edit_user_profile()
-
-    
     /**
-     *  add 'Other Roles' column to WordPress users list table
+     * Load plugin javascript stuff
      * 
-     * @param array $columns WordPress users list table columns list
-     * @return array
+     * @param string $hook_suffix
      */
-    public function user_role_column($columns = array()) {
+    public function admin_load_js($hook_suffix) {
 
-        $columns['ure_roles'] = esc_html__('Other Roles', 'ure');
-
-        return $columns;
-    }
-    // end of user_role_column()
-
-    
-    /**
-     * Return user's roles list for display in the WordPress Users list table
-     *
-     * @param string $retval
-     * @param string $column_name
-     * @param int $user_id
-     *
-     * @return string all user roles
-     */
-    public function user_role_row($retval = '', $column_name = '', $user_id = 0) 
-    {
-
-        // Only looking for User Role Editor other user roles column
-        if ('ure_roles' == $column_name) {
-            $user = get_userdata($user_id);
-            // Get the users roles
-            $roles = $this->lib->other_user_roles($user);
-            $retval = $this->lib->roles_text($roles);
-        }
-
-        // Pass retval through
-        return $retval;
-    }
-    // end of user_role_row()
-    
-
-    // save additional user roles when user profile is updated, as WordPress itself doesn't know about them
-    public function user_profile_update($user_id) {
-
-        if (!current_user_can('edit_user', $user_id)) {
+        URE_Known_JS_CSS_Compatibility_Issues::fix($hook_suffix, $this->ure_hook_suffixes);                
+        
+        if (!in_array($hook_suffix, $this->ure_hook_suffixes)) {
             return;
         }
-        $user = get_userdata($user_id);
+        
+        wp_enqueue_script('jquery-ui-dialog', false, array('jquery-ui-core', 'jquery-ui-button', 'jquery'));
+        wp_enqueue_script('jquery-ui-tabs', false, array('jquery-ui-core', 'jquery'));
+        wp_register_script('ure-js', plugins_url('/js/ure-js.js', URE_PLUGIN_FULL_PATH));
+        wp_enqueue_script('ure-js');
+        wp_localize_script('ure-js', 'ure_data', array(
+            'wp_nonce' => wp_create_nonce('user-role-editor'),
+            'page_url' => URE_WP_ADMIN_URL . URE_PARENT . '?page=users-' . URE_PLUGIN_FILE,
+            'is_multisite' => is_multisite() ? 1 : 0,
+            'select_all' => esc_html__('Select All', 'ure'),
+            'unselect_all' => esc_html__('Unselect All', 'ure'),
+            'reverse' => esc_html__('Reverse', 'ure'),
+            'update' => esc_html__('Update', 'ure'),
+            'confirm_submit' => esc_html__('Please confirm permissions update', 'ure'),
+            'add_new_role_title' => esc_html__('Add New Role', 'ure'),
+            'rename_role_title' => esc_html__('Rename Role', 'ure'),
+            'role_name_required' => esc_html__(' Role name (ID) can not be empty!', 'ure'),
+            'role_name_valid_chars' => esc_html__(' Role name (ID) must contain latin characters, digits, hyphens or underscore only!', 'ure'),
+            'numeric_role_name_prohibited' => esc_html__(' WordPress does not support numeric Role name (ID). Add latin characters to it.', 'ure'),
+            'add_role' => esc_html__('Add Role', 'ure'),
+            'rename_role' => esc_html__('Rename Role', 'ure'),
+            'delete_role' => esc_html__('Delete Role', 'ure'),
+            'cancel' => esc_html__('Cancel', 'ure'),
+            'add_capability' => esc_html__('Add Capability', 'ure'),
+            'delete_capability' => esc_html__('Delete Capability', 'ure'),
+            'reset' => esc_html__('Reset', 'ure'),
+            'reset_warning' => esc_html__('DANGER! Resetting will restore default settings from WordPress Core.', 'ure') . "\n\n" .
+            esc_html__('If any plugins have changed capabilities in any way upon installation (such as S2Member, WooCommerce, and many more), those capabilities will be DELETED!', 'ure') . "\n\n" .
+            esc_html__('For more information on how to undo changes and restore plugin capabilities go to', 'ure') . "\n" .
+            'http://role-editor.com/how-to-restore-deleted-wordpress-user-roles/' . "\n\n" .
+            esc_html__('Continue?', 'ure'),
+            'default_role' => esc_html__('Default Role', 'ure'),
+            'set_new_default_role' => esc_html__('Set New Default Role', 'ure'),
+            'delete_capability' => esc_html__('Delete Capability', 'ure'),
+            'delete_capability_warning' => esc_html__('Warning! Be careful - removing critical capability could crash some plugin or other custom code', 'ure'),
+            'capability_name_required' => esc_html__(' Capability name (ID) can not be empty!', 'ure'),
+            'capability_name_valid_chars' => esc_html__(' Capability name (ID) must contain latin characters, digits, hyphens or underscore only!', 'ure'),
+        ));
+        
+        // load additional JS stuff for Pro version, if exists
+        do_action('ure_load_js');
 
-        if (isset($_POST['ure_other_roles'])) {
-            $new_roles = array_intersect($user->roles, $_POST['ure_other_roles']);
-            $skip_roles = array();
-            foreach ($new_roles as $role) {
-                $skip_roles['$role'] = 1;
-            }
-            unset($new_roles);
-            foreach ($_POST['ure_other_roles'] as $role) {
-                if (!isset($skip_roles[$role])) {
-                    $user->add_role($role);
-                }
-            }
-        }
-                
     }
-    // update_user_profile()
-
-
+    // end of admin_load_js()
+                       
     
     public function ure_ajax() {
-        
-        require_once(URE_PLUGIN_DIR . 'includes/class-ajax-processor.php');
+                
         $ajax_processor = new URE_Ajax_Processor($this->lib);
         $ajax_processor->dispatch();
         
     }
     // end of ure_ajax()
     
-
+    
     // execute on plugin deactivation
-    function cleanup() 
-    {
+    function cleanup() {
 		
     }
     // end of setup()
-
+        
  
 }
 // end of User_Role_Editor

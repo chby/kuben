@@ -24,16 +24,7 @@ function jr_ps_admin_hook() {
 	//  Add Settings Page for this Plugin
 	global $jr_ps_plugin_data;
 	$settings = get_option( 'jr_ps_settings' );
-	if ( $settings['user_submenu'] ) {
-		add_users_page( $jr_ps_plugin_data['Name'], 'Private Site', 'add_users', 'jr_ps_settings', 'jr_ps_users_settings_page' );
-	}
 	add_options_page( $jr_ps_plugin_data['Name'], 'Private Site', 'manage_options', 'jr_ps_settings', 'jr_ps_settings_page' );
-}
-
-function jr_ps_users_settings_page() {
-	global $jr_ps_users_submenu;
-	$jr_ps_users_submenu = TRUE;
-	jr_ps_settings_page();
 }
 
 /**
@@ -46,11 +37,7 @@ function jr_ps_settings_page() {
 	global $jr_ps_plugin_data;
 	add_thickbox();
 	echo '<div class="wrap">';
-	echo '<h2>' . $jr_ps_plugin_data['Name'] . '</h2>';
-	
-	//	Required because it is only called automatically for Admin Pages in the Settings section
-	settings_errors( 'jr_ps_settings' );
-	
+	echo '<h2>' . $jr_ps_plugin_data['Name'] . '</h2>';	
 	echo '<h3>Overview</h3><p>';
 	$settings = get_option( 'jr_ps_settings' );
 	if ( $settings['private_site'] ) {
@@ -201,6 +188,12 @@ function jr_ps_admin_init() {
 		'jr_ps_settings_page', 
 		'jr_ps_custom_login_section' 
 	);
+	add_settings_field( 'custom_login_onsite', 
+		'Check Custom Login URL?', 
+		'jr_ps_echo_custom_login_onsite', 
+		'jr_ps_settings_page', 
+		'jr_ps_custom_login_section' 
+	);
 	add_settings_section( 'jr_ps_exclusions_section', 
 		'Visible Exclusions', 
 		'jr_ps_exclusions_expl', 
@@ -235,9 +228,9 @@ function jr_ps_admin_init() {
 		'jr_ps_advanced_settings_expl', 
 		'jr_ps_settings_page' 
 	);
-	add_settings_field( 'user_submenu', 
-		'User Submenu?', 
-		'jr_ps_echo_user_submenu', 
+	add_settings_field( 'override_omit', 
+		'Allow Landing Location for Custom Login pages', 
+		'jr_ps_echo_override_omit', 
 		'jr_ps_settings_page', 
 		'jr_ps_advanced_settings_section' 
 	);
@@ -382,7 +375,7 @@ function jr_ps_echo_landing() {
 		'return' => 'Return to same URL',
 	    'home'   => 'Go to Site Home',
 	    'admin'  => 'Go to WordPress Admin Dashboard',
-		'omit'   => 'Omit <code>?redirect_to=</code> from URL (a check mark in this checkbox is recommended for Custom Login pages)', 
+		'omit'   => 'Omit <code>?redirect_to=</code> from URL (this option is recommended for Custom Login pages)', 
 	    'url'    => 'Go to Specific URL'
 		) as $val => $desc ) {
 		if ( $first ) {
@@ -443,11 +436,17 @@ function jr_ps_echo_login_url() {
 		. esc_url( $settings['login_url'] ) 
 		. '" />'
 		. JR_PS_BELOW_FIELDS
-		. '(cut and paste Custom Login URL here; leave blank otherwise)'
-		. JR_PS_BELOW_FIELDS
+		. '(cut and paste Custom Login URL here; leave blank otherwise)';
+}
+
+function jr_ps_echo_custom_login_onsite() {
+	$settings = get_option( 'jr_ps_settings' );
+	echo '<input type="checkbox" id="custom_login_onsite" name="jr_ps_settings[custom_login_onsite]" value="true" '
+		. checked( TRUE, $settings['custom_login_onsite'], FALSE )
+		. ' /> '
 		. 'URL must begin with <code>' 
 		. trim( get_home_url(), '\ /' ) 
-		. '/</code>';
+		. '/</code> (Advanced Setting: a check mark in this checkbox is recommended)';	
 }
 
 /**
@@ -525,44 +524,30 @@ function jr_ps_echo_excl_url_del() {
 }
 
 function jr_ps_advanced_settings_expl() {
+	?>
+	<p>
+	The
+	<b>
+	Allow Landing Location for Custom Login pages
+	</b>
+	setting shown immediately below will,
+	under some circumstances,
+	lock you out of your own WordPress site
+	and prevent Visitors from viewing your site.
+	You will have to rename or delete the
+	<code>/wp-contents/plugins/jonradio-private-site/</code>
+	folder with FTP or a File Manager provided with your web hosting.
+	If you are not familiar with either of these methods
+	for deleting files within your WordPress installation,
+	you risk making your WordPress site completely inoperative.
+	</p>
+	<?php
 }
 
-function jr_ps_echo_user_submenu() {
-	global $jr_ps_users_submenu;
-	if ( isset( $jr_ps_users_submenu ) ) {
-		jr_ps_input_user_submenu( 'hidden' );
-		jr_ps_input_user_submenu( 'disabled' );
-		echo ' (this setting can not be altered from the User submenu)';
-	} else {
-		jr_ps_input_user_submenu( 'normal' );
-		echo ' Should this Settings page be listed in the Users submenu of the Admin panels? (It is always listed in the Settings submenu)';
-	}
-}
-
-/**
- * Creates <input> for user_submenu
- * 
- * Build an <input type=checkbox> form field, or not, of the specified type,
- * based on the current value of the user_submenu setting.
- *
- * @param	string	$type		hidden, disabled, normal
- * @return  Null				Nothing is returned
- */
-function jr_ps_input_user_submenu( $type ) {
+function jr_ps_echo_override_omit() {
 	$settings = get_option( 'jr_ps_settings' );
-	$common = ' id="user_submenu" name="jr_ps_settings[user_submenu]" value="true" ';
-	if ( 'hidden' === $type ) {
-		if ( $settings['user_submenu'] ) {
-			echo '<input type="hidden"' . $common . '/>';
-		}
-	} else {
-		echo '<input type="checkbox"' . $common;
-		if ( 'disabled' === $type ) {
-			echo 'disabled="disabled" ';
-		}
-		echo checked( TRUE, $settings['user_submenu'], FALSE )
-			. ' />';
-	}
+	echo '<input type="checkbox" id="override_omit" name="jr_ps_settings[override_omit]" value="true"'
+		. checked( TRUE, $settings['override_omit'], FALSE ) . ' /> Can Lock You Out of Your WordPress Site! (see paragraph above)';
 }
 
 function jr_ps_echo_check_role() {
@@ -579,22 +564,16 @@ function jr_ps_validate_settings( $input ) {
 	$valid = array();
 	$settings = get_option( 'jr_ps_settings' );
 	
-	if ( isset( $input['private_site'] ) && ( $input['private_site'] === 'true' ) ) {
-		$valid['private_site'] = TRUE;
-	} else {
-		$valid['private_site'] = FALSE;
-	}
-	
-	if ( isset( $input['reveal_registration'] ) && ( $input['reveal_registration'] === 'true' ) ) {
-		$valid['reveal_registration'] = TRUE;
-	} else {
-		$valid['reveal_registration'] = FALSE;
-	}
-
-	if ( isset( $input['wplogin_php'] ) && ( $input['wplogin_php'] === 'true' ) ) {
-		$valid['wplogin_php'] = TRUE;
-	} else {
-		$valid['wplogin_php'] = FALSE;
+	foreach ( array(
+				'private_site', 
+				'reveal_registration', 
+				'wplogin_php', 
+				'override_omit', 
+				'custom_login',
+				'custom_login_onsite', 
+				'excl_home'
+				) as $opt ) {
+		$valid[ $opt ] = isset( $input[ $opt ] ) && ( 'true' === $input[ $opt ] );
 	}
 
 	$url = jr_v1_sanitize_url( $input['specific_url'] );
@@ -652,68 +631,82 @@ function jr_ps_validate_settings( $input ) {
 		$valid['landing'] = $input['landing'];
 	}
 	
-	$url = jr_v1_sanitize_url( $input['login_url'] );	
-	if ( '' !== $url ) {
-		if ( FALSE === $url ) {
-			/*	Reset to previous URL value and generate an error message.
+	/*	Custom Login section
+	*/
+	if ( FALSE === ( $valid['login_url'] = jr_v1_sanitize_url( $input['login_url'] ) ) ) {
+		/*	Generate an error message.
+			Then clear Custom Login checkbox and URL fields.
+		*/
+		add_settings_error(
+			'jr_ps_settings',
+			'jr_ps_urlerror',
+			'Custom Login URL is not a valid URL<br /><code>'
+				. sanitize_text_field( $input['login_url'] ) . '</code>',
+			'error'
+		);		
+		$valid['login_url'] = '';
+		$valid['custom_login'] = FALSE;
+	} else {
+		if ( ( '' !== $valid['login_url'] )
+			&& $valid['custom_login_onsite'] 
+			&& ( !jr_ps_site_url( $url ) ) ) {
+			/*	Generate an error message.
+				Then clear Custom Login checkbox and URL fields.
 			*/
-			$url = $settings['login_url'];			
 			add_settings_error(
 				'jr_ps_settings',
 				'jr_ps_urlerror',
-				'Custom Login URL is not a valid URL<br /><code>'
+				'Error in Custom Login URL.  It must point to someplace on this WordPress web site<br /><code>'
 					. sanitize_text_field( $input['login_url'] ) . '</code>',
 				'error'
 			);
+			$valid['login_url'] = '';
+			$valid['custom_login'] = FALSE;
 		} else {
-			if ( !jr_ps_site_url( $url ) ) {
-				/*	Reset to previous URL value and generate an error message.
+			if ( ( '' !== $valid['login_url'] ) && ( !$valid['custom_login'] ) ) {
+				/*	URL specified but not Custom Login checkbox
+					
+					Generate an error message.
+					Then clear Custom Login checkbox and URL fields.
 				*/
-				$url = $settings['login_url'];
 				add_settings_error(
 					'jr_ps_settings',
 					'jr_ps_urlerror',
-					'Error in Custom Login URL.  It must point to someplace on this WordPress web site<br /><code>'
-						. sanitize_text_field( $input['login_url'] ) . '</code>',
+					'Error in Custom Login: URL specified but <i>Custom Login page?</i> checkbox not selected.',
 					'error'
 				);
+				$valid['login_url'] = '';
+				$valid['custom_login'] = FALSE;
+			} else {
+				if ( ( '' === $valid['login_url'] ) && ( $valid['custom_login'] ) ) {
+					/*	Custom Login checkbox specified but not URL
+					
+						Generate an error message.
+						Then clear Custom Login checkbox and URL fields.
+					*/
+					add_settings_error(
+						'jr_ps_settings',
+						'jr_ps_nourlerror',
+						'Error in Custom Login: <i>Custom Login page?</i> checkbox selected but no URL specified.  Checkbox deselected.',
+						'error'
+					);
+					$valid['login_url'] = '';
+					$valid['custom_login'] = FALSE;
+				}
 			}
 		}
 	}
-	$valid['login_url'] = $url;
-	
-	if ( isset( $input['custom_login'] ) && ( $input['custom_login'] === 'true' ) ) {
-		if ( '' === $valid['login_url'] ) {
-			add_settings_error(
-				'jr_ps_settings',
-				'jr_ps_nourlerror',
-				'Error in Custom Login: <i>Custom Login page?</i> checkbox selected but no URL specified.  Checkbox deselected.',
-				'error'
-			);
-			$valid['custom_login'] = FALSE;
-		} else {
-			$valid['custom_login'] = TRUE;
-			/*	Was Custom Login just turned on?
-				If so, be sure Landing Location is set to Omit.
-			*/
-			if ( !$setting['custom_login'] && ( 'omit' !== $valid['landing'] ) ) {
-				$valid['landing'] = 'omit';
-				add_settings_error(
-					'jr_ps_settings',
-					'jr_ps_setomit',
-					'Landing Location changed to "Omit", recommended for Custom Login pages.',
-					'updated'
-				);
-			}
-		}
-	} else {
-		$valid['custom_login'] = FALSE;
-	}
-	
-	if ( isset( $input['excl_home'] ) && ( $input['excl_home'] === 'true' ) ) {
-		$valid['excl_home'] = TRUE;
-	} else {
-		$valid['excl_home'] = FALSE;
+
+	if ( $valid['custom_login'] 
+		&& ( !$valid['override_omit'] ) 
+		&& ( 'omit' !== $valid['landing'] ) ) {
+		$valid['landing'] = 'omit';
+		add_settings_error(
+			'jr_ps_settings',
+			'jr_ps_setomit',
+			'Landing Location changed to "Omit", recommended for Custom Login pages. See Advanced Settings to Override, but please read Warnings first.',
+			'updated'
+		);
 	}
 	
 	if ( is_multisite() ) {
@@ -788,20 +781,9 @@ function jr_ps_validate_settings( $input ) {
 			}
 		}
 	}
-
-	if ( isset( $input['user_submenu'] ) && ( $input['user_submenu'] === 'true' ) ) {
-		$valid['user_submenu'] = TRUE;
-	} else {
-		$valid['user_submenu'] = FALSE;
-	}
 	
-	global $jr_ps_users_submenu;
-	/*	This conditional is really a poor solution, but it is the only thing I could find that worked.
-		Anything else gave me zero or two Settings Saved messages, with the main problem being on the 
-		Settings submenu page when checkbox was filled for 'user_submenu' and Save Settings button hit.
-	*/
 	$errors = get_settings_errors();
-	if ( $valid['user_submenu'] = TRUE || ( ( isset( $jr_ps_users_submenu ) ) && ( empty( $errors ) ) ) ) {
+	if ( isset( $jr_ps_users_submenu ) && empty( $errors ) ) {
 		add_settings_error(
 			'jr_ps_settings',
 			'jr_ps_saved',

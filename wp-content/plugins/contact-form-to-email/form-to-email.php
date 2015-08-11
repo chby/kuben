@@ -3,7 +3,7 @@
 Plugin Name: Contact Form to Email
 Plugin URI: http://wordpress.dwbooster.com/forms/contact-form-to-email
 Description: Contact form that sends the data to email and also to a database list and CSV file.
-Version: 1.01
+Version: 1.1.6
 Author: CodePeople.net
 Author URI: http://codepeople.net
 License: GPL
@@ -11,7 +11,7 @@ License: GPL
 
 define('CP_CFEMAIL_DEFER_SCRIPTS_LOADING', (get_option('CP_CFTE_LOAD_SCRIPTS',"1") == "1"?true:false));
 
-define('CP_CFEMAIL_DEFAULT_form_structure', '[[{"name":"email","index":0,"title":"Email","ftype":"femail","userhelp":"","csslayout":"","required":true,"predefined":"","size":"medium"},{"name":"subject","index":1,"title":"Subject","required":true,"ftype":"ftext","userhelp":"","csslayout":"","predefined":"","size":"medium"},{"name":"message","index":2,"size":"large","required":true,"title":"Message","ftype":"ftextarea","userhelp":"","csslayout":"","predefined":""}],[{"title":"Contact Form","description":"You can use the following form to contact us.","formlayout":"top_aligned"}]]');
+define('CP_CFEMAIL_DEFAULT_form_structure', '[[{"name":"email","index":0,"title":"Email","ftype":"femail","userhelp":"","csslayout":"","required":true,"predefined":"","size":"medium"},{"name":"subject","index":1,"title":"Subject","required":true,"ftype":"ftext","userhelp":"","csslayout":"","predefined":"","size":"medium"},{"name":"message","index":2,"size":"large","required":true,"title":"Message","ftype":"ftextarea","userhelp":"","csslayout":"","predefined":""}],[{"title":"Contact Form","description":"","formlayout":"top_aligned"}]]');
 
 define('CP_CFEMAIL_DEFAULT_fp_subject', 'Contact from the blog...');
 define('CP_CFEMAIL_DEFAULT_fp_inc_additional_info', 'true');
@@ -38,12 +38,12 @@ define('CP_CFEMAIL_DEFAULT_vs_text_min', 'Please enter a value greater than or e
 
 define('CP_CFEMAIL_DEFAULT_cv_enable_captcha', 'true');
 define('CP_CFEMAIL_DEFAULT_cv_width', '180');
-define('CP_CFEMAIL_DEFAULT_cv_height', '60');
+define('CP_CFEMAIL_DEFAULT_cv_height', '65');
 define('CP_CFEMAIL_DEFAULT_cv_chars', '5');
 define('CP_CFEMAIL_DEFAULT_cv_font', 'font-1.ttf');
 define('CP_CFEMAIL_DEFAULT_cv_min_font_size', '25');
 define('CP_CFEMAIL_DEFAULT_cv_max_font_size', '35');
-define('CP_CFEMAIL_DEFAULT_cv_noise', '200');
+define('CP_CFEMAIL_DEFAULT_cv_noise', '190');
 define('CP_CFEMAIL_DEFAULT_cv_noise_length', '4');
 define('CP_CFEMAIL_DEFAULT_cv_background', 'ffffff');
 define('CP_CFEMAIL_DEFAULT_cv_border', '000000');
@@ -60,7 +60,11 @@ $cp_plugin = new CP_ContactFormToEmail;
 register_activation_hook(__FILE__, array($cp_plugin,'install') ); 
 add_action( 'media_buttons', array($cp_plugin, 'insert_button'), 11);
 add_action( 'init', array($cp_plugin, 'data_management'));
-add_action( 'widgets_init', create_function('', 'return register_widget("CP_ContactFormToEmail_Widget");') );
+
+function cfte_plugin_init() {
+   load_plugin_textdomain( 'cfte', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
+add_action('plugins_loaded', 'cfte_plugin_init');
 
 if ( is_admin() ) {    
     add_action('admin_enqueue_scripts', array($cp_plugin,'insert_adminScripts'), 1);    

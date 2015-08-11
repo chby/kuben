@@ -7,8 +7,18 @@
 //	Exit if .php file accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
 
+/*	Earliest Action Hook possible is 'template_redirect',
+	AFTER Rewrite: URL changed with Pretty Permalinks and
+	correcting the presence or absence of www. in domain name.
+	
+	Unfortunately, a wpengine.com (hosting site) mandatory plugin
+	appears to be blocking this hook, so the next hook in time sequence
+	is being used:
+	'get_header'
+*/
+add_action( 'get_header', 'jr_ps_force_login' );
+
 add_action( 'login_init', 'jr_ps_login' );
-add_action( 'wp', 'jr_ps_force_login' );
 add_filter( 'login_url', 'jr_ps_login_url' );
 add_action( 'wp_login_failed', 'jr_ps_login_failed' );
 add_action( 'wp_authenticate', 'jr_ps_wp_authenticate', 10, 2 );

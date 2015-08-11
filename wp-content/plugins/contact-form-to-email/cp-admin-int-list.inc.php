@@ -61,16 +61,16 @@ if (isset($_GET['a']) && $_GET['a'] == '1')
 } 
 else if (isset($_GET['u']) && $_GET['u'] != '')
 {
-    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_items.'` SET form_name="'.esc_sql($_GET["name"]).'" WHERE id='.$_GET['u']);           
+    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_items.'` SET form_name="'.esc_sql($_GET["name"]).'" WHERE id='.intval($_GET['u']));
     $message = "Item updated";        
 }
 else if (isset($_GET['d']) && $_GET['d'] != '')
 {
-    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_items.'` WHERE id='.$_GET['d']);       
+    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_items.'` WHERE id='.intval($_GET['d']));       
     $message = "Item deleted";
 } else if (isset($_GET['c']) && $_GET['c'] != '')
 {
-    $myrows = $wpdb->get_row( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".$_GET['c'], ARRAY_A);    
+    $myrows = $wpdb->get_row( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".intval($_GET['c']), ARRAY_A);    
     unset($myrows["id"]);
     $myrows["form_name"] = 'Cloned: '.$myrows["form_name"];
     $wpdb->insert( $wpdb->prefix.$this->table_items, $myrows);
@@ -81,7 +81,7 @@ else if (isset($_GET['ac']) && $_GET['ac'] == 'st')
     update_option( 'CP_CFTE_LOAD_SCRIPTS', ($_GET["scr"]=="1"?"0":"1") );   
     if ($_GET["chs"] != '')
     {
-        $target_charset = $_GET["chs"];
+        $target_charset = esc_sql($_GET["chs"]);
         $tables = array( $wpdb->prefix.$this->table_messages, $wpdb->prefix.$this->table_items );                
         foreach ($tables as $tab)
         {  
@@ -117,7 +117,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
 
 ?>
 <div class="wrap">
-<h2><?php echo $this->plugin_name; ?></h2>
+<h1><?php echo $this->plugin_name; ?></h1>
 
 <script type="text/javascript">
  function cp_addItem()
@@ -279,7 +279,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
         </tr>  
         <tr valign="top">
         <th scope="row">Email Text (CSV file will be attached)</th>
-        <td><textarea type="text" name="cp_cfte_rep_message" rows="3" cols="80"><?php echo get_option('cp_cfte_rep_message', 'Attached you will find the data from the form submissions.'); ?></textarea></td>
+        <td><textarea type="text" name="cp_cfte_rep_message" rows="3" cols="80"><?php echo htmlspecialchars(get_option('cp_cfte_rep_message', 'Attached you will find the data from the form submissions.')); ?></textarea></td>
         </tr>        
         <tr valign="top">
         <th scope="row"></th>

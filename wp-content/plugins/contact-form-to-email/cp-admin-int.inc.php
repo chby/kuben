@@ -17,7 +17,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 
 ?>
 <div class="wrap">
-<h2><?php echo $this->plugin_name; ?></h2>
+<h1><?php echo $this->plugin_name; ?></h1>
 
 <input type="button" name="backbtn" value="Back to items list..." onclick="document.location='options-general.php?page=<?php echo $this->menu_parameter; ?>';">
 <br /><br />
@@ -160,7 +160,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
            qs += "&font="+f.cv_font.options[f.cv_font.selectedIndex].value;
            qs += "&r="+(randcaptcha++);
            
-           document.getElementById("captchaimg").src= "<?php echo $this->get_site_url().'/?'.$this->prefix.'_captcha=captcha&inAdmin=1'; ?>"+qs;
+           document.getElementById("captchaimg").src= "<?php echo $this->get_site_url(true).'/?'.$this->prefix.'_captcha=captcha&inAdmin=1'; ?>"+qs;
         }
 
      </script>
@@ -367,7 +367,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
          <td colspan="2" rowspan="">
            Preview:<br />
              <br />
-            <img src="<?php echo $this->get_site_url().'/?'.$this->prefix.'_captcha=captcha&inAdmin=1'; ?>"  id="captchaimg" alt="security code" border="0"  />            
+            <img src="<?php echo $this->get_site_url(true).'/?'.$this->prefix.'_captcha=captcha&inAdmin=1'; ?>"  id="captchaimg" alt="security code" border="0"  />            
          </td> 
         </tr>             
                 
@@ -464,8 +464,8 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <div id="metabox_basic_settings" class="postbox" >
   <h3 class='hndle' style="padding:5px;"><span>Note</span></h3>
   <div class="inside">
-   To insert this form in a post/page, use the dedicated icon <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name).'" /></a>';     ?>
-   which has been added to your Upload/Insert Menu, just below the title of your Post/Page.
+   To insert this form in a post/page, use the dedicated icon <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name,'cfte').'" /></a>';     ?>
+   which has been added to your Upload/Insert Menu, just below the title of your Post/Page edition.
    <br /><br />
   </div>
 </div>
@@ -476,7 +476,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <p class="submit"><input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes"  /></p>
 
 
-[<a href="http://wordpress.dwbooster.com/support" target="_blank">Request Custom Modifications</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
+[<a href="http://wordpress.dwbooster.com/support?product=contact-form-to-email&version=1.1.5&ref=dashboard-settings" target="_blank">Request Custom Modifications</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
 </form>
 </div>
 <script type="text/javascript">generateCaptcha();</script>

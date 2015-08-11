@@ -6,7 +6,7 @@ if ( !is_admin() )
     exit;
 }
 
-$this->item = $_GET["cal"];
+$this->item = intval($_GET["cal"]);
 
 global $wpdb;
 
@@ -14,12 +14,12 @@ $message = "";
 
 if (isset($_GET['lu']) && $_GET['lu'] != '')
 {
-    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_messages.'` SET paid='.esc_sql($_GET["status"]).' WHERE id='.$_GET['lu']);           
+    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_messages.'` SET paid='.intval($_GET["status"]).' WHERE id='.intval($_GET['lu']));           
     $message = "Item updated";        
 }
 else if (isset($_GET['ld']) && $_GET['ld'] != '')
 {
-    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE id='.$_GET['ld']);       
+    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE id='.intval($_GET['ld']));       
     $message = "Item deleted";
 }
 else if (isset($_GET['import']) && $_GET['import'] == '1')
@@ -41,7 +41,7 @@ else if (isset($_GET['import']) && $_GET['import'] == '1')
             for ($c=3; $c < $num; $c++)
                 if (isset($form[$c-3]))
                 {
-                    $rowdata[$form[$c-3]->name] = $data[$c]; //echo $data[$c] . "<br />\n";
+                    $rowdata[$form[$c-3]->name] = $data[$c]; 
                     $formatted_data .= $form[$c-3]->title. ": ". $data[$c] . "\n\n";
                 }                    
             $wpdb->insert($wpdb->prefix.$this->table_messages, array( 
@@ -59,7 +59,7 @@ else if (isset($_GET['import']) && $_GET['import'] == '1')
 }
 
 if ($this->item != 0)
-    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.$this->item);
+    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.intval($this->item));
 
 
 $current_page = intval($_GET["p"]);
@@ -70,7 +70,7 @@ $cond = '';
 if ($_GET["search"] != '') $cond .= " AND (data like '%".esc_sql($_GET["search"])."%' OR posted_data LIKE '%".esc_sql($_GET["search"])."%')";
 if ($_GET["dfrom"] != '') $cond .= " AND (`time` >= '".esc_sql($_GET["dfrom"])."')";
 if ($_GET["dto"] != '') $cond .= " AND (`time` <= '".esc_sql($_GET["dto"])." 23:59:59')";
-if ($this->item != 0) $cond .= " AND formid=".$this->item;
+if ($this->item != 0) $cond .= " AND formid=".intval($this->item);
 
 $events = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" );
 $total_pages = ceil(count($events) / $records_per_page);
@@ -93,7 +93,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
  }
 </script>
 <div class="wrap">
-<h2><?php echo $this->plugin_name; ?> - Message List</h2>
+<h1><?php echo $this->plugin_name; ?> - Message List</h1>
 
 <input type="button" name="backbtn" value="Back to items list..." onclick="document.location='admin.php?page=<?php echo $this->menu_parameter; ?>';">
 
@@ -137,8 +137,8 @@ echo paginate_links(  array(
     'end_size'     => 1,
     'mid_size'     => 2,
     'prev_next'    => True,
-    'prev_text'    => __('&laquo; Previous'),
-    'next_text'    => __('Next &raquo;'),
+    'prev_text'    => __('&laquo; Previous','cfte'),
+    'next_text'    => __('Next &raquo;','cfte'),
     'type'         => 'plain',
     'add_args'     => False
     ) );
@@ -160,8 +160,7 @@ echo paginate_links(  array(
 	  <tr class='<?php if (!($i%2)) { ?>alternate <?php } ?>author-self status-draft format-default iedit' valign="top">
 		<td><?php echo substr($events[$i]->time,0,16); ?></td>
 		<td><?php echo $events[$i]->notifyto; ?></td>
-		<td><?php 
-		        //echo str_replace("\n","<br />",$events[$i]->data); 
+		<td><?php  
 		        $data = $events[$i]->data;		        
 		        $posted_data = unserialize($events[$i]->posted_data);		        
 		        foreach ($posted_data as $item => $value)
@@ -169,7 +168,7 @@ echo paginate_links(  array(
 		            {
 		                $data = str_replace ($posted_data[str_replace("_url","",$item)],'<a href="'.$value.'" target="_blank">'.$posted_data[str_replace("_url","",$item)].'</a><br />',$data);  		                
 		            }    
-		        echo str_replace("\n","<br />",$data); 
+		        echo str_replace("\n","<br />",str_replace('<','&lt;',$data)); 
 		    ?></td>
 		<td class="cpnopr">
 		  <input type="button" name="caldelete_<?php echo $events[$i]->id; ?>" value="Delete" onclick="cp_deleteMessageItem(<?php echo $events[$i]->id; ?>);" />                             
@@ -199,8 +198,8 @@ echo paginate_links(  array(
       After those initial columns the fields (columns) must appear in the same order than in the form.</p>
    <p>Sample format for the CSV file:</p>
    <pre>
-    <span style="color:#009900;">2013-04-21 18:50:00, 192.168.1.12, john@sample.com,</span> "john@sample.com", "sample subject", "sample message text"
-    <span style="color:#009900;">2013-05-16 20:49:00, 192.168.1.24, jane.smith@sample.com,</span> "jane.smith@sample.com", "other subject", "other message"
+    <span style="color:#009900;">2015-03-21 18:50:00, 192.168.1.12, john@sample.com,</span> "john@sample.com", "sample subject", "sample message text"
+    <span style="color:#009900;">2015-04-16 20:49:00, 192.168.1.24, jane.smith@sample.com,</span> "jane.smith@sample.com", "other subject", "other message"
    </pre>
    </form>
   </div>

@@ -6,7 +6,7 @@ if ( !is_admin() )
     exit;
 }
 
-$this->item = $_GET["cal"];
+$this->item = intval($_GET["cal"]);
 
 global $wpdb;
 
@@ -97,7 +97,7 @@ else
 <link href="<?php echo plugins_url('css/style.css', __FILE__); ?>" type="text/css" rel="stylesheet" />   
 
 <div class="wrap">
-<h2><?php echo $this->plugin_name; ?> - Report</h2>
+<h1><?php echo $this->plugin_name; ?> - Report</h1>
 
 <input type="button" name="backbtn" value="Back to items list..." onclick="document.location='admin.php?page=<?php echo $this->menu_parameter; ?>';">
 

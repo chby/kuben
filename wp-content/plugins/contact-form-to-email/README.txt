@@ -3,8 +3,8 @@ Contributors: codepeople
 Donate link: http://wordpress.dwbooster.com/forms/contact-form-to-email
 Tags: contact form,contact,email,contact form database,form,contact form excel,feedback,captcha,contact form plugin,form to email,form to database,contact form builder,form to csv,wordpress contact form,csv,contact form reports,form to excel,contact form csv,drag and drop contact form,excel
 Requires at least: 3.0.5
-Tested up to: 4.0
-Stable tag: 1.0.1
+Tested up to: 4.3
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ In addition to that basic feature it also **saves the contact form data into a d
 * **Form data saved into the database:** Avoid losing submissions and keep a record of the received contact form messages.
 * **Printable list of messages:** Get the list of contacts received from the contact form within a selected date range and print it.
 * **Export data to CSV/Excel:** Export the contact form data to a standard format that can be used by other applications. Export the email addresses and other contact form data using date and text search filters.
-* **Automatic reports:** Provide automatic reports of the contact form usage and data entered into the form. Report of daily submissions and accumulative hourly report. Printable reports for specific fields into the contact form. Helps you top understand your data.
+* **Automatic reports:** Provide automatic reports of the contact form usage and data entered into the form. Report of daily submissions and accumulative hourly report. Printable reports for specific fields into the contact form. Helps you to understand your data.
 * **Automatic email reports:** Automatic reports sent to the indicated email addresses on a regular period.
 * **Form Validation:** Set validation rules for each contact form field. Keep your data clean.
 * **Anti-spam protection:** Built-it captcha anti-spam protection. No need to rely on external services for the contact form anti-spam protection.
@@ -80,13 +80,81 @@ The Contact Form to Email plugin allows the setup of two types of automatic (per
 
 The reports are attached in a CSV / Excel file into the emails. In both cases the destination email addresses, email subject, email text and the report's interval can be specified. More info available in the section "Other Notes".
 
+
+= Language Support =
+
+The Contact Form to Email plugin is compatible with all charsets. The troubleshoot area contains options to change the encoding of the plugin database tables if needed.
+
+Translations are supported through PO/MO files located in the Contact Form to Email plugin folder "languages".
+
+The following translations are already included in the plugin:
+
+* English
+* Italian
+* Portuguese
+* Portuguese(Brasil)
+* Russian
+* Polish
+* Turkish
+* Afrikaans (af)
+* Arabic (ar)
+* Armenian (hy_AM)
+* Azerbaijani(az)
+* Basque (eu)
+* Belarusian (be_BY)
+* Bosnian (bs_BA)
+* Bulgarian (bg_BG)
+* Catalan (ca)
+* Central Kurdish (ckb)
+* Chinese (China zh_CN)
+* Chinese (Taiwan zh_TW)
+* Croatian (hr)
+* Czech (cs_CZ)
+* Danish (da_DK)
+* Dutch (nl_NL)
+* Esperanto (eo_EO)
+* Estonian (et)
+* Finnish (fi)
+* French (fr_FR)
+* Galician (gl_ES)
+* Georgian (ka_GE)
+* German (de_DE)
+* Greek (el)
+* Hebrew (he_IL)
+* Hindi (hi_IN)
+* Hungarian (hu_HU)
+* Indian Bengali (bn_IN)
+* Indonesian (id_ID)
+* Irish (ga_IE)
+* Japanese (ja)
+* Korean (ko_KR)
+* Latvian (lv)
+* Lithuanian (lt_LT)
+* Macedonian (mk_MK)
+* Malay (ms_MY)
+* Malayalam (ml_IN)
+* Maltese (mt_MT)
+* Norwegian (nb_NO)
+* Persian (fa_IR)
+* Punjabi (pa_IN)
+* Romanian (ro_RO)
+* Serbian (sr_RS)
+* Slovak (sk_SK)
+* Slovene (sl_SI)
+* Spanish (es_ES)
+* Swedish (sv_SE)
+* Tagalog (tl)
+* Tamil (ta)
+* Thai (th)
+* Ukrainian (uk)
+
 = Updates =
 
-New features has been published in the current Contact Form to Email version 1.0.1 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 80,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
+New features has been published in the current Contact Form to Email version 1.2.1 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 105,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
 
 = New: Form Builder =
 
-In the latest update a basic form builder was included to visually add/modify/delete text fields, text-areas and emails with their respective validations.
+In the latest update a form builder was included to visually add/modify/delete text fields, text-areas and emails with their respective validations.
 
 
 == Installation ==
@@ -364,9 +432,7 @@ When you click a field already added into the contact form builder area, you can
 * First Contact Form to Email stable version released.
 * More configuration options added on the contact form settings area.
 
-== Upgrade Notice ==
-
-= 1.0.1 =
+= 1.01 =
 * Compatible with the latest WP versions
 * New automatic CSV report options
 * Added functional form builder
@@ -375,3 +441,47 @@ When you click a field already added into the contact form builder area, you can
 * Fixed bug in pagination links
 * New feature for adding submission number into the emails
 * Fixed bug with back slashes on submissions
+
+
+= 1.1.2 =
+* Compatible with the latest WP versions
+* Improved translation code, compatible with the latest WP versions
+* New translations
+* Auto-detection and auto-solution for captcha image issues in servers with problem with the PHP sessions configuration
+* Fixed warning that appeared with PHP safe mode restrictions 
+* Sanitized GET parameters used in queries
+
+
+= 1.1.3 =
+* Sanitized parameters used in SQL queries.
+* Support for large forms.
+* Improved translations.
+* Compatible with the latest WordPress 4.2.x version
+
+= 1.1.4 =
+* Compatible with the WordPress 4.2.2 version
+
+= 1.1.5 =
+* Removed use of esc_sql for numeric values
+* Fixed XSS vulnerability
+* Fixed bug in translation functions.
+
+= 1.1.6 =
+* Compatible with the latest WordPress 4.2.3
+* Update to messages list.
+* Better code for captcha image generation.
+* Fixed conflict with zLib library
+* Update to the captcha generation to add content-length header
+
+
+== Upgrade Notice ==
+
+= 1.1.6 =
+* Compatible with the latest WordPress 4.2.3
+* Update to messages list.
+* Better code for captcha image generation.
+* Fixed conflict with zLib library
+* Update to the captcha generation to add content-length header
+
+
+Important note: If you are using the Professional version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://wordpress.dwbooster.com/support

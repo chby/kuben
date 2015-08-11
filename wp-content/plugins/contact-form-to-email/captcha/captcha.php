@@ -6,26 +6,10 @@ http://www.codepeople.net
 
 error_reporting(7);
 
-ob_clean();
+if (!ini_get("zlib.output_compression")) ob_clean();
 
 if (!isset($_GET["ps"])) $_GET["ps"] = '';
 
-if ($_GET["hdwtest"] == "sessiontest")
-{
-    session_start();
-    session_register("tmpvar");
-    if ($_GET["autocall"]!=1){
-        $_SESSION["tmpvar"] = "ok";
-    } else {
-        if ($_SESSION["tmpvar"]!="ok") {
-            die("Session Error");
-        } else {
-            die("Sessions works on your server!");
-        }
-    }   
-    header("Location: ".$PHP_SELF."?hdwtest=sessiontest&autocall=1" );
-    exit;
-}
 
 if ($_GET["width"] == '' || !is_numeric($_GET["width"])) $_GET["width"] = "180";
 if ($_GET["height"] == '' || !is_numeric($_GET["height"])) $_GET["height"] = "60";
@@ -94,6 +78,7 @@ for ($i = 0; $i < $letter_count; $i++) {
 }
 $_SESSION['rand_code'.$_GET["ps"]] = str_replace(" ", "", $str);
 
+setCookie('rand_code'.$_GET["ps"], md5(str_replace(" ", "", $str)), time()+36000,"/");
 
 $image = imagecreatetruecolor($imgX, $imgY);
 $backgr_col = imagecolorallocate($image, $bcolor["r"],$bcolor["g"],$bcolor["b"]);
@@ -160,8 +145,15 @@ else
     imagestring ( $image, $font, $x, $y, $str, $text_col);	
 }
 
-header("Content-type: image/png");
+function cfwpp_output_handler($img) {
+    header('Content-type: image/png');
+    header('Content-Length: ' . strlen($img));
+    return $img;
+}
+
+ob_start("cfwpp_output_handler");
 imagepng($image);
+ob_end_flush();
 imagedestroy ($image);
 exit;
 ?>
