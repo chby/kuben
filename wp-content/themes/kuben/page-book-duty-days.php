@@ -44,6 +44,8 @@ if (!empty($_POST['action'])) {
  				   	<?php 
 						$date = get_option('book_duty_days_start_date');
  				   	 	$end_date = get_option('book_duty_days_end_date');
+						$not_bookable_dates = explode("\n", get_option('book_duty_days_not_bookable_dates'));
+						foreach ($not_bookable_dates as $i => $not_bookable_date) { $not_bookable_dates[$i] = trim($not_bookable_date); }
 						$booked_duty_days = array();
 						$user_booked_duty_days = array();
 						$users = get_users(array('meta_key' => 'booked_duty_days'));
@@ -64,8 +66,8 @@ if (!empty($_POST['action'])) {
 					  	<input type="hidden" name="action" value="book_duty_table" />
 						<table class="book-duty-days-table">
 							<?php while (strtotime($date) <= strtotime($end_date)) { ?>
-								<tr class="<?php if (is_weekend($date)) { echo "weekend"; } else if (in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
-									<td class="input"><?php if (!is_weekend($date)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
+								<tr class="<?php if (in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (is_weekend($date)) { echo "weekend"; } else if (in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
+									<td class="input"><?php if (!is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
 									<td class="date"><?php echo $date; ?></td>
 		 					   		<td class="weekday"><?php echo weekday($date); ?></td>
 									<td class="booked-by">

@@ -40,11 +40,15 @@ table.book-duty-days-table tr.booked td {
 	border-bottom: 1px solid #f1f1cb;
 }
 
-table.book-duty-days-table tr.weekend, table.book-duty-days-table tr.booked {
+table.book-duty-days-table tr.not_bookable, table.book-duty-days-table tr.weekend, table.book-duty-days-table tr.booked {
 	cursor: default;
 }
 
 table.book-duty-days-table tr.weekend td {
 	color: #dd3737;
 	background-color: #f5f5f5 !important;
+}
+
+table.book-duty-days-table tr.not_bookable td {
+	background-color: #f8f8f8 !important;
 }

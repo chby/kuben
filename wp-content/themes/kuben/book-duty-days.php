@@ -21,6 +21,7 @@ function book_duty_days_create_menu() {
 function register_book_duty_days_settings() {
   register_setting('book-duty-days-options', 'book_duty_days_start_date');
   register_setting('book-duty-days-options', 'book_duty_days_end_date');
+  register_setting('book-duty-days-options', 'book_duty_days_not_bookable_dates');
 }
 
 function book_duty_days_page() {
@@ -41,6 +42,10 @@ function book_duty_days_page() {
 			        <tr valign="top">
 			        	<th scope="row">Slutdatum</th>
 			        	<td><input type="text" name="book_duty_days_end_date" value="<?php echo esc_attr(get_option('book_duty_days_end_date')); ?>" /></td>
+			        </tr>
+			        <tr valign="top">
+			        	<th scope="row">Ej bokningsbara datum</th>
+			        	<td><textarea name="book_duty_days_not_bookable_dates"><?php echo esc_attr(get_option('book_duty_days_not_bookable_dates')); ?></textarea></td>
 			        </tr>
 			    </table>
 				<input type="submit" name="submit" id="submit" class="button button-primary" value="Spara ändringar" style="margin-top: 10px;">
