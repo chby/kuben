@@ -5,8 +5,19 @@ Template Name: Book Duty Days
 
 global $userdata; get_currentuserinfo();
 
+$current_user_id = $user_ID;
+$current_user_data = $userdata;
+
+if (in_array(get_current_user_role(), array("administrator", "director")) && $_GET['user_id']) {
+	$current_user_id = $_GET['user_id'];
+	$current_user_data = get_userdata($current_user_id);
+}
+
+$current_user_name = $current_user_data->first_name." ".$current_user_data->last_name;
+
+
 if (!empty($_POST['action'])) {
-	update_user_meta($user_ID, 'booked_duty_days', $_POST['booked_duty_days']);
+	update_user_meta($current_user_id, 'booked_duty_days', $_POST['booked_duty_days']);
 }
 
 ?>
@@ -58,16 +69,37 @@ if (!empty($_POST['action'])) {
 											
 					?>
 
+					<?php if (in_array(get_current_user_role(), array("administrator", "director"))) { ?>
+						<?php $parents = get_users(array('role' => 'parent')); ?>
+						<form method="get" style="margin-bottom: 20px;">
+							<select name="user_id" id="book_for_parent_user_id">
+								<option value="">Boka åt förälder</option>
+								<?php foreach ($parents as $user) { ?>
+									<?php $data = get_userdata($user->ID); ?>
+									<option value="<?php echo $user->ID; ?>" <?php if ($_GET['user_id'] == $user->ID){ ?>selected="selected"<?php } ?>><?php echo $data->first_name; ?> <?php echo $data->last_name; ?></option>
+								<?php } ?>
+							</select>
+						</form>
+						
+						<script type="text/javascript">
+							jQuery(document).ready(function() {
+								jQuery("#book_for_parent_user_id").change(function() {
+									jQuery(this).parent("form").submit();
+								});
+							});
+						</script>
+					<?php } ?>
+
 					<div class="alert alert-success" role="alert">
-						Du har bokat <strong class="nr-of-duty-days"><?php echo count($user_booked_duty_days[$user_ID]['booked_duty_days']); ?></strong> jourdag(ar)!
+						Du har bokat <strong class="nr-of-duty-days"><?php echo count($user_booked_duty_days[$current_user_id]['booked_duty_days']); ?></strong> jourdag(ar)!
 					</div>
 					
-					<form class="book-duty-days-form" action="" method="post" role="form">
+					<form class="book-duty-days-form" action="?user_id=<?php $current_user_id; ?>" method="post" role="form">
 					  	<input type="hidden" name="action" value="book_duty_table" />
 						<table class="book-duty-days-table">
 							<?php while (strtotime($date) <= strtotime($end_date)) { ?>
-								<tr class="<?php if (in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (is_weekend($date)) { echo "weekend"; } else if (in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
-									<td class="input"><?php if (!is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$user_ID]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
+								<tr class="<?php if (in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (is_weekend($date)) { echo "weekend"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
+									<td class="input"><?php if (!is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
 									<td class="date"><?php echo $date; ?></td>
 		 					   		<td class="weekday"><?php echo weekday($date); ?></td>
 									<td class="booked-by">
@@ -89,7 +121,7 @@ if (!empty($_POST['action'])) {
 					
 					<script type="text/javascript">
 						jQuery(document).ready(function() {
-							window.currentUserName = "<?php echo $userdata->first_name." ".$userdata->last_name ?>";
+							window.currentUserName = "<?php echo $current_user_name; ?>";
 							jQuery(".book-duty-days-table td").click(function(e) {
 								var tr = jQuery(this).parent("tr");
 								if (!jQuery(e.target).is("input") && !tr.hasClass("weekend") && !tr.hasClass("booked")) {
