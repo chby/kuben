@@ -53,6 +53,7 @@ if (!empty($_POST['action'])) {
 					
 
  				   	<?php 
+						$today = date('Y-m-d', time());
 						$date = get_option('book_duty_days_start_date');
  				   	 	$end_date = get_option('book_duty_days_end_date');
 						$not_bookable_dates = explode("\n", get_option('book_duty_days_not_bookable_dates'));
@@ -98,8 +99,8 @@ if (!empty($_POST['action'])) {
 					  	<input type="hidden" name="action" value="book_duty_table" />
 						<table class="book-duty-days-table">
 							<?php while (strtotime($date) <= strtotime($end_date)) { ?>
-								<tr class="<?php if (in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (is_weekend($date)) { echo "weekend"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
-									<td class="input"><?php if (!is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
+								<tr class="<?php if (is_weekend($date)) { echo "weekend"; } else if (strtotime($today) >= strtotime($date) || in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
+									<td class="input"><?php if (strtotime($today) < strtotime($date) && !is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
 									<td class="date"><?php echo $date; ?></td>
 		 					   		<td class="weekday"><?php echo weekday($date); ?></td>
 									<td class="booked-by">
@@ -122,6 +123,7 @@ if (!empty($_POST['action'])) {
 					<script type="text/javascript">
 						jQuery(document).ready(function() {
 							window.currentUserName = "<?php echo $current_user_name; ?>";
+							window.currentUserIsAdmin = <?php echo (in_array(get_current_user_role(), array("administrator", "director")) ? "true" : "false"); ?>;
 							jQuery(".book-duty-days-table td").click(function(e) {
 								var tr = jQuery(this).parent("tr");
 								if (!jQuery(e.target).is("input") && !tr.hasClass("weekend") && !tr.hasClass("booked")) {
@@ -135,12 +137,20 @@ if (!empty($_POST['action'])) {
 							});
 							jQuery(".book-duty-days-form input").change(function() {
 								var input = jQuery(this);
+								var today = new Date();
+								var clickedDate = new Date(input.val());
 								if (input.is(":checked")) {
 									input.parents("tr").addClass("checked");
 									input.parents("tr").find("td.booked-by").text(window.currentUserName);
 								} else {
-									input.parents("tr").removeClass("checked");
-									input.parents("tr").find("td.booked-by").text("");
+									if (!window.currentUserIsAdmin && (clickedDate-today)/(1000*60*60*24) < 3) {
+										input.attr("checked", "checked");
+										alert("Du kan inte avboka din jourdag så nära inpå. Kontakta Kubens förskolechef!");
+										return false;
+									} else {
+										input.parents("tr").removeClass("checked");
+										input.parents("tr").find("td.booked-by").text("");
+									}
 								}
 								jQuery.post("", jQuery(".book-duty-days-form").serialize());
 								jQuery(".alert strong.nr-of-duty-days").text(jQuery("tr.checked").length);
