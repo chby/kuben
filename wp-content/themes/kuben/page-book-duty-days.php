@@ -5,9 +5,7 @@ Template Name: Book Duty Days
 
 global $userdata; get_currentuserinfo();
 
-//$today = date('Y-m-d', time());
-
-$today = date("Y-m-d", strtotime("+3 day", time()));
+$today = date('Y-m-d', time());
 
 $current_user_id = $user_ID;
 $current_user_data = $userdata;
