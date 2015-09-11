@@ -5,6 +5,10 @@ Template Name: Book Duty Days
 
 global $userdata; get_currentuserinfo();
 
+//$today = date('Y-m-d', time());
+
+$today = date("Y-m-d", strtotime("+3 day", time()));
+
 $current_user_id = $user_ID;
 $current_user_data = $userdata;
 
@@ -17,7 +21,28 @@ $current_user_name = $current_user_data->first_name." ".$current_user_data->last
 
 
 if (!empty($_POST['action'])) {
+	$directors = get_users(array('role' => 'director')); 
+	$current_user_meta = get_user_meta($current_user_id, 'booked_duty_days', true);
+	
+	foreach($current_user_meta as $date) {
+		if (!in_array($date,$_POST['booked_duty_days']) && date("W", strtotime($today)) == date("W", strtotime($date))) {
+			foreach($directors as $director) {
+				wp_mail($director->user_email, "Avbokad jourdag ".$date, $current_user_name." har avbokat sin jourdag ".$date.".");	
+			}	
+		}
+	}
+	
+	foreach($_POST['booked_duty_days'] as $date) {
+		if (!in_array($date,$current_user_meta) && date("W", strtotime($today)) == date("W", strtotime($date))) {
+			foreach($directors as $director) {
+				wp_mail($director->user_email, "Bokad jourdag ".$date, $current_user_name." har bokat jourdagen ".$date.".");
+			}	
+		}
+	}
+			
 	update_user_meta($current_user_id, 'booked_duty_days', $_POST['booked_duty_days']);
+	
+	die();
 }
 
 ?>
@@ -53,7 +78,6 @@ if (!empty($_POST['action'])) {
 					
 
  				   	<?php 
-						$today = date('Y-m-d', time());
 						$date = get_option('book_duty_days_start_date');
  				   	 	$end_date = get_option('book_duty_days_end_date');
 						$not_bookable_dates = explode("\n", get_option('book_duty_days_not_bookable_dates'));
