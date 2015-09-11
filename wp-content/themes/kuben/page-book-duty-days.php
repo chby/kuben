@@ -25,7 +25,7 @@ if (!empty($_POST['action'])) {
 	foreach($current_user_meta as $date) {
 		if (!in_array($date,$_POST['booked_duty_days']) && date("W", strtotime($today)) == date("W", strtotime($date))) {
 			foreach($directors as $director) {
-				wp_mail($director->user_email, "Avbokad jourdag ".$date, $current_user_name." har avbokat sin jourdag ".$date.".");	
+				wp_mail($director->user_email, "[Kubens föräldrawebb] Avbokad jourdag ".$date, $current_user_name." har avbokat sin jourdag ".$date.".");	
 			}	
 		}
 	}
@@ -33,7 +33,7 @@ if (!empty($_POST['action'])) {
 	foreach($_POST['booked_duty_days'] as $date) {
 		if (!in_array($date,$current_user_meta) && date("W", strtotime($today)) == date("W", strtotime($date))) {
 			foreach($directors as $director) {
-				wp_mail($director->user_email, "Bokad jourdag ".$date, $current_user_name." har bokat jourdagen ".$date.".");
+				wp_mail($director->user_email, "[Kubens föräldrawebb] Bokad jourdag ".$date, $current_user_name." har bokat jourdagen ".$date.".");
 			}	
 		}
 	}
