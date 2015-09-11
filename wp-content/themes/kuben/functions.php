@@ -607,6 +607,10 @@ function save_extra_user_profile_fields($user_id) {
   	return true;
 }
 
+function send_sms($to, $message) {
+	file_get_contents('https://e116d2bd-5e34-4618-927d-0114ffcd1577:CDVKVoR42tjORBslieC-_g@api.blower.io/messages', false, stream_context_create(array('http' => array('header'  => "Content-type: application/x-www-form-urlencoded\r\n", 'method'  => 'POST', 'content' => http_build_query(array('to' => $to, 'message' => $message)),),)));
+}
+
 require_once('book-duty-days.php');
 
 ?>
