@@ -20,6 +20,7 @@ if (!empty($_POST['action'])) {
 	$errors = edit_user($user_ID);
     	
 	if (!is_wp_error($errors)) {
+		update_user_meta($user_ID, 'mobile', $_POST['mobile']);
 		do_action('personal_options_update', $user_ID);
 		$d_url = $_POST['dashboard_url'];
 		wp_redirect(get_option("siteurl").'?page_id='.$post->ID.'&updated=true');
@@ -99,6 +100,14 @@ if (!empty($_POST['action'])) {
 								<input type="text" name="email" class="form-control" id="email" value="<?php echo $userdata->user_email ?>" />
 							</div>
 						</div>
+						
+						<div class="form-group">					    	
+							<label class="col-sm-2 control-label" for="email">Mobiltelefon</label>							
+							<div class="col-sm-6">
+								<input type="text" name="mobile" class="form-control" id="mobile" value="<?php echo get_user_meta($user_ID, 'mobile', true) ?>" />
+							</div>
+						</div>
+						
 											
 						<div class="form-group">					    	
 							<label class="col-sm-2 control-label" for="pass1">Byt lösenord</label>							
