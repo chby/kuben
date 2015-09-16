@@ -2,8 +2,6 @@
 	require('../wp-blog-header.php' );
 	
 	$tomorrow = date("Y-m-d", strtotime("+1 day", time()));
-
-	wp_mail("erik.tehler@kubennacka.se", "[Kubens föräldrawebb] Imorgon", $tomorrow);
 		
 	$users = get_users(array('meta_key' => 'booked_duty_days'));
 	
