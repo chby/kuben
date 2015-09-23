@@ -122,7 +122,7 @@ if (!empty($_POST['action'])) {
 						<table class="book-duty-days-table">
 							<?php while (strtotime($date) <= strtotime($end_date)) { ?>
 								<tr class="<?php if (is_weekend($date)) { echo "weekend"; } else if (strtotime($today) >= strtotime($date) || in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
-									<td class="input"><?php if (strtotime($today) < strtotime($date) && !is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } ?></td>
+									<td class="input"><?php if (strtotime($today) < strtotime($date) && !is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } else if (strtotime($today) >= strtotime($date) && in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?><input type="hidden" name="booked_duty_days[]" value="<?php echo $date; ?>" /><?php } ?></td>
 									<td class="date"><?php echo $date; ?></td>
 		 					   		<td class="weekday"><?php echo weekday($date); ?></td>
 									<td class="booked-by">
@@ -148,7 +148,7 @@ if (!empty($_POST['action'])) {
 							window.currentUserIsAdmin = <?php echo (in_array(get_current_user_role(), array("administrator", "director")) ? "true" : "false"); ?>;
 							jQuery(".book-duty-days-table td").click(function(e) {
 								var tr = jQuery(this).parent("tr");
-								if (!jQuery(e.target).is("input") && !tr.hasClass("weekend") && !tr.hasClass("booked")) {
+								if (!jQuery(e.target).is("input") && !tr.hasClass("weekend") && !tr.hasClass("booked") && !tr.hasClass("not_bookable")) {
 									var input = tr.find("input");
 									if (input.is(":checked")) {
 										input.removeAttr("checked").trigger("change");								
