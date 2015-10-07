@@ -165,9 +165,13 @@ if (!empty($_POST['action'])) {
 									input.parents("tr").addClass("checked");
 									input.parents("tr").find("td.booked-by").text(window.currentUserName);
 								} else {
-									if (!window.currentUserIsAdmin && (clickedDate-today)/(1000*60*60*24) < 3) {
+									if (!window.currentUserIsAdmin && (clickedDate-today)/(1000*60*60*24) < 7) {
 										input.attr("checked", "checked");
 										alert("Du kan inte avboka din jourdag så nära inpå. Kontakta Kubens förskolechef!");
+										return false;
+									} else if (!window.currentUserIsAdmin && jQuery(".book-duty-days-form input[type='checkbox'][value!='"+input.val()+"']:not(:checked)").length == 0) {
+										input.attr("checked", "checked");
+										alert("Du kan inte avboka din jourdag, eftersom det inte finns några lediga dagar att byta till. Kontakta Kubens förskolechef!");
 										return false;
 									} else {
 										input.parents("tr").removeClass("checked");
