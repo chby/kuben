@@ -284,7 +284,7 @@ add_action( 'add_meta_boxes', 'add_homepage_meta_box' );
 $prefix = 'custom_';  
 $custom_meta_fields = array(  
     array(  
-        'label'=> 'Homepage tagline area',  
+        'label'	=> 'Homepage tagline area',  
         'desc'  => 'Displayed underneath page title. Only used on homepage template. HTML can be used.',  
         'id'    => $prefix.'tagline',  
         'type'  => 'textarea' 
@@ -544,9 +544,9 @@ function remove_menu_pages_for_director() {
 	remove_menu_page('options-general.php');
 }
 
-if (get_current_user_role() == "parent") {
-	add_filter('show_admin_bar', '__return_false');
-} else if (get_current_user_role() == "director" && is_admin()) {
+add_filter('show_admin_bar', '__return_false');
+
+if (get_current_user_role() == "director" && is_admin()) {
 	add_action('admin_menu', 'remove_menu_pages_for_director');
 }
 
@@ -558,22 +558,22 @@ add_filter('login_redirect', 'admin_default_page');
 
 if (function_exists('register_nav_menu')) {
 	register_nav_menu('right_main_menu', 'The Main Right Menu' );
-	
-	function add_login_out_item_to_menu( $items, $args ){
-
-	if ($args->theme_location != 'right_main_menu') { return $items; } 
-
-	$redirect = (is_home()) ? false : get_permalink();
-	if(is_user_logged_in( )) {
-		$link = '<a href="' . wp_logout_url( $redirect ) . '" title="Logga ut">Logga ut</a>';
-	} else {
-		$link = '<a href="' . wp_login_url( $redirect  ) . '" title="Logga in">Logga in</a>';
+	function add_login_out_item_to_menu($items, $args) {
+		if ($args->theme_location != 'right_main_menu') { return $items; } 
+		if (get_current_user_role() == "administrator" || get_current_user_role() == "director") {
+			$link = '<a href="'.admin_url().'" target="_blank" title="Administrera">Administrera</a>';			
+			$items .= '<li id="administer-link" class="menu-item menu-type-link">'.$link.'</li>';
+		}
+		$redirect = (is_home()) ? false : get_permalink();
+		if (is_user_logged_in()) {
+			$link = '<a href="'.wp_logout_url($redirect).'" title="Logga ut">Logga ut</a>';
+		} else {
+			$link = '<a href="'.wp_login_url($redirect).'" title="Logga in">Logga in</a>';
+		}
+		$items .= '<li id="log-in-out-link" class="menu-item menu-type-link">'.$link.'</li>';
+		return $items;
 	}
-			
-	return $items.= '<li id="log-in-out-link" class="menu-item menu-type-link">'. $link . '</li>';
-	}
-	
-	add_filter( 'wp_nav_menu_items', 'add_login_out_item_to_menu', 50, 2 );
+	add_filter('wp_nav_menu_items', 'add_login_out_item_to_menu', 50, 2);
 }
 
 
@@ -581,14 +581,32 @@ add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');
 
 function extra_user_profile_fields($user) {
+	$families = new WP_Query(array('post_type' => 'family', 'posts_per_page' => '9999'));
 ?>
-	<h3><?php _e("Extra profile information", "blank"); ?></h3>
+	<h3><?php _e("Kubens föräldrawebb", "blank"); ?></h3>
   	<table class="form-table">
   		<tr>
-    		<th><label for="mobile"><?php _e("Mobile"); ?></label></th>
+    		<th><label for="family_id"><?php _e("Familj"); ?></label></th>
       		<td>
-        		<input type="text" name="mobile" id="mobile" class="regular-text" value="<?php echo esc_attr(get_the_author_meta('mobile', $user->ID)); ?>" /><br />
-        		<span class="description"><?php _e("Please enter your mobile phone number."); ?></span>
+				<select name="family_id" id="family_id">
+					<option value=""></option>
+					<?php while ($families->have_posts()) { ?>
+						<?php $families->the_post(); ?>
+						<option value="<?php echo get_the_ID(); ?>" <?php if (get_the_ID() == get_the_author_meta('family_id', $user->ID)) { echo 'selected="selected"'; } ?>><?php echo the_title(); ?></option>
+					<?php } ?>
+				</select>
+    		</td>
+    	</tr>
+  		<tr>
+    		<th><label for="parent_role"><?php _e("Föräldraroll"); ?></label></th>
+      		<td>
+        		<input type="text" name="parent_role" id="parent_role" class="regular-text" value="<?php echo esc_attr(get_the_author_meta('parent_role', $user->ID)); ?>" />
+    		</td>
+    	</tr>
+  		<tr>
+    		<th><label for="mobile"><?php _e("Mobiltelefon"); ?></label></th>
+      		<td>
+        		<input type="text" name="mobile" id="mobile" class="regular-text" value="<?php echo esc_attr(get_the_author_meta('mobile', $user->ID)); ?>" />
     		</td>
     	</tr>
 	</table>
@@ -601,7 +619,9 @@ add_action('edit_user_profile_update', 'save_extra_user_profile_fields');
 function save_extra_user_profile_fields($user_id) {
 	$saved = false;
   	if (current_user_can('edit_user', $user_id)) {
-		update_user_meta($user_id, 'mobile', $_POST['mobile']);
+		update_user_meta($user_id, 'family_id', $_POST['family_id']);
+		if ($_POST['parent_role']) { update_user_meta($user_id, 'parent_role', $_POST['parent_role']); }
+		if ($_POST['mobile']) { update_user_meta($user_id, 'mobile', $_POST['mobile']); }
 		$saved = true;
   	}
   	return true;
@@ -611,6 +631,7 @@ function send_sms($to, $message) {
 	file_get_contents('https://e116d2bd-5e34-4618-927d-0114ffcd1577:CDVKVoR42tjORBslieC-_g@api.blower.io/messages', false, stream_context_create(array('http' => array('header'  => "Content-type: application/x-www-form-urlencoded\r\n", 'method'  => 'POST', 'content' => http_build_query(array('to' => $to, 'message' => $message)),),)));
 }
 
+require_once('family.php');
 require_once('book-duty-days.php');
 
 ?>

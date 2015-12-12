@@ -18,7 +18,7 @@ if (!empty($_POST['action'])) {
 	check_admin_referer('update-profile_' . $user_ID);
  
 	$errors = edit_user($user_ID);
-    	
+		
 	if (!is_wp_error($errors)) {
 		update_user_meta($user_ID, 'mobile', $_POST['mobile']);
 		do_action('personal_options_update', $user_ID);
@@ -49,8 +49,7 @@ if (!empty($_POST['action'])) {
 						<section class="post_content">
 							<?php the_content(); ?>
 						</section> <!-- end article section -->
-						
-					
+				
 					</article> <!-- end article -->
 					
 					
@@ -80,6 +79,35 @@ if (!empty($_POST['action'])) {
 							</div>
 						<?php } ?>
 						
+						<?php $family_id = get_user_meta($user_ID, 'family_id', true); ?>
+						<?php if ($family_id) { ?>
+							<input type="hidden" name="family_id" id="family_id" value="<?php echo $family_id; ?>" />
+							<?php $family = get_post($family_id); ?>
+							<?php $children = get_post_meta($family_id, 'Barn'); ?>
+							<div class="form-group">					    	
+								<label class="col-sm-2 control-label" for="email">Familj</label>							
+								<div class="col-sm-6">
+									<input type="text" name="family_title" class="form-control" id="family_title" value="<?php echo $family->post_title; ?>" readonly="readonly" />
+								</div>
+							</div>
+							<div class="form-group">					    	
+								<label class="col-sm-2 control-label" for="email">Barn</label>							
+								<div class="col-sm-6">
+									<input type="text" name="children" class="form-control" id="children" value="<?php echo join($children, ", "); ?>" readonly="readonly" />
+								</div>
+							</div>
+						<?php } ?>
+						
+						<?php $parent_role = get_user_meta($user_ID, 'parent_role', true); ?>
+						<?php if ($parent_role) { ?>
+							<div class="form-group">					    	
+								<label class="col-sm-2 control-label" for="email">Föräldraroll</label>							
+								<div class="col-sm-6">
+									<input type="text" name="parent_role" class="form-control" id="parent_role" value="<?php echo $parent_role; ?>" readonly="readonly" />
+								</div>
+							</div>
+						<?php } ?>
+						
 					    <div class="form-group">
 					    	<label class="col-sm-2 control-label" for="first_name">Förnamn</label>
 							<div class="col-sm-6">
@@ -101,10 +129,11 @@ if (!empty($_POST['action'])) {
 							</div>
 						</div>
 						
+						
 						<div class="form-group">					    	
 							<label class="col-sm-2 control-label" for="email">Mobiltelefon</label>							
 							<div class="col-sm-6">
-								<input type="text" name="mobile" class="form-control" id="mobile" value="<?php echo get_user_meta($user_ID, 'mobile', true) ?>" />
+								<input type="text" name="mobile" class="form-control" id="mobile" value="<?php echo get_user_meta($user_ID, 'mobile', true); ?>" />
 							</div>
 						</div>
 						
