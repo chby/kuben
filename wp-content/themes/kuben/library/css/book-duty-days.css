@@ -30,7 +30,7 @@ table.book-duty-days-table tr td.input input {
 	margin: 4px 0 0 8px;
 }  
 
-table.book-duty-days-table tr.checked td {
+table.book-duty-days-table tr.checked td, table.book-duty-days-table tr.booked.family_booked td {
 	background-color: #eff7ea;
 	border-bottom: 1px solid #d8f1cb;
 }

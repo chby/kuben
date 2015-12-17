@@ -17,6 +17,9 @@ if (in_array(get_current_user_role(), array("administrator", "director")) && $_G
 
 $current_user_name = $current_user_data->first_name." ".$current_user_data->last_name;
 
+$current_family_id = get_the_author_meta('family_id', $current_user_id);
+$current_family = get_post($current_family_id);
+$current_family_users = get_users(array('meta_key' => 'family_id', 'meta_value' => $current_family_id));
 
 if (!empty($_POST['action'])) {
 	$directors = get_users(array('role' => 'director')); 
@@ -88,7 +91,15 @@ if (!empty($_POST['action'])) {
 							$meta = get_user_meta($user->ID, 'booked_duty_days', true);
 							$user_booked_duty_days[$user->ID] = array('booked_duty_days' => (is_array($meta) ? $meta : array()), 'name' => $data->first_name." ".$data->last_name);
 							$booked_duty_days = array_merge($booked_duty_days, $user_booked_duty_days[$user->ID]['booked_duty_days']);
-						} 	
+						}
+						if (sizeof($current_family_users) > 0) {
+							$current_family_booked_duty_days = array();
+							foreach($current_family_users as $family_user) {
+								if ($user_booked_duty_days[$family_user->ID]['booked_duty_days']) {
+									$current_family_booked_duty_days = array_merge($current_family_booked_duty_days, $user_booked_duty_days[$family_user->ID]['booked_duty_days']);
+								}
+							}
+						}
 											
 					?>
 
@@ -114,14 +125,18 @@ if (!empty($_POST['action'])) {
 					<?php } ?>
 
 					<div class="alert alert-success" role="alert">
-						Du har bokat <strong class="nr-of-duty-days"><?php echo count($user_booked_duty_days[$current_user_id]['booked_duty_days']); ?></strong> jourdag(ar)!
+						<?php if ($current_family_booked_duty_days) { ?>
+							<strong><?php echo $current_family->post_title; ?></strong><br />Din familj har bokat <strong class="nr-of-duty-days family-days"><?php echo count($current_family_booked_duty_days); ?></strong> jourdag(ar)!
+						<?php } else { ?>
+							Du har bokat <strong class="nr-of-duty-days"><?php echo count($user_booked_duty_days[$current_user_id]['booked_duty_days']); ?></strong> jourdag(ar)!
+						<?php } ?>
 					</div>
 					
 					<form class="book-duty-days-form" action="?user_id=<?php $current_user_id; ?>" method="post" role="form">
 					  	<input type="hidden" name="action" value="book_duty_table" />
 						<table class="book-duty-days-table">
 							<?php while (strtotime($date) <= strtotime($end_date)) { ?>
-								<tr class="<?php if (is_weekend($date)) { echo "weekend"; } else if (strtotime($today) >= strtotime($date) || in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?> ">
+								<tr class="<?php if (is_weekend($date)) { echo "weekend"; } else if (strtotime($today) >= strtotime($date) || in_array($date, $not_bookable_dates)) { echo "not_bookable"; } else if (in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { echo "checked"; } else if (in_array($date, $booked_duty_days)) { echo "booked"; } ?>  <?php if ($current_family_booked_duty_days && in_array($date, $current_family_booked_duty_days)) { echo "family_booked"; } ?>">
 									<td class="input"><?php if (strtotime($today) < strtotime($date) && !is_weekend($date) && !in_array($date, $not_bookable_dates)) { ?><input type="checkbox" name="booked_duty_days[]" value="<?php echo $date; ?>" <?php if (in_array($date, $booked_duty_days)) { ?>checked="checked"<?php } ?> <?php if (in_array($date, $booked_duty_days) && !in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?>disabled="disabled"<?php } ?> /><?php } else if (strtotime($today) >= strtotime($date) && in_array($date, $user_booked_duty_days[$current_user_id]['booked_duty_days'])) { ?><input type="hidden" name="booked_duty_days[]" value="<?php echo $date; ?>" /><?php } ?></td>
 									<td class="date"><?php echo $date; ?></td>
 		 					   		<td class="weekday"><?php echo weekday($date); ?></td>
@@ -163,6 +178,9 @@ if (!empty($_POST['action'])) {
 								var clickedDate = new Date(input.val());
 								if (input.is(":checked")) {
 									input.parents("tr").addClass("checked");
+									if (jQuery(".alert strong.nr-of-duty-days").hasClass("family-days")) {
+										input.parents("tr").addClass("family_booked");
+									}
 									input.parents("tr").find("td.booked-by").text(window.currentUserName);
 								} else {
 									if (!window.currentUserIsAdmin && (clickedDate-today)/(1000*60*60*24) < 7) {
@@ -175,11 +193,12 @@ if (!empty($_POST['action'])) {
 										return false;
 									} else {
 										input.parents("tr").removeClass("checked");
+										input.parents("tr").removeClass("family_booked");
 										input.parents("tr").find("td.booked-by").text("");
 									}
 								}
 								jQuery.post("", jQuery(".book-duty-days-form").serialize());
-								jQuery(".alert strong.nr-of-duty-days").text(jQuery("tr.checked").length);
+								jQuery(".alert strong.nr-of-duty-days").text((jQuery(".alert strong.nr-of-duty-days").hasClass("family-days")) ? jQuery("tr.family_booked").length : jQuery("tr.checked").length);
 							});
 						});
 					</script>

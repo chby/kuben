@@ -15,6 +15,7 @@ if (is_admin()) {
 function book_duty_days_create_menu() {
 	add_object_page('Jourdagar', 'Jourdagar', 'edit_book_duty_days', 'book_duty_days_page', 'book_duty_days_page');
 	add_action('admin_init', 'export_duty_days');
+	add_action('admin_init', 'delete_duty_days');
 	add_action('admin_init', 'register_book_duty_days_settings');
 }
 
@@ -58,6 +59,12 @@ function book_duty_days_page() {
 			<a href="?action=export_duty_days" class="button button-primary">Ladda ner Excel</a>
 		</div>
 	</div>
+	<div class="postbox">
+		<div class="inside">
+			<h3 class="hndle">Rensa alla jourdagar</h3>
+			<a href="?action=delete_duty_days" class="button button-primary">Rensa jourdagar</a>
+		</div>
+	</div>
 </div>
 <?php 
 }
@@ -95,7 +102,8 @@ function export_duty_days() {
 			$user_booked_duty_days[$user->ID] = array('booked_duty_days' => $meta, 'name' => $data->first_name." ".$data->last_name);
 		}
 		
-		usort($user_booked_duty_days, create_function('$a, $b', 'return strnatcasecmp($a["name"], $b["name"]);'));
+		$sorted_user_booked_duty_days = $user_booked_duty_days;
+		usort($sorted_user_booked_duty_days, create_function('$a, $b', 'return strnatcasecmp($a["name"], $b["name"]);'));
 	
 		$i = 2;
 		while (strtotime($date) <= strtotime($end_date)) {
@@ -127,7 +135,7 @@ function export_duty_days() {
 		$objPHPExcel->getActiveSheet()->getStyle('A1:C1')->getFont()->setBold(true);
 		
 		$i = 2;
-		foreach ($user_booked_duty_days as $data) {
+		foreach ($sorted_user_booked_duty_days as $data) {
 			$objPHPExcel->getActiveSheet()->setCellValue('A' . $i, $data['name'])
 				                          ->setCellValue('B' . $i, count($data['booked_duty_days']));
 			foreach ($data['booked_duty_days'] as $date) {
@@ -135,6 +143,41 @@ function export_duty_days() {
 				$i++;
 			}
 			$i++;
+		}
+		
+		$families = new WP_Query(array('post_type' => 'family', 'posts_per_page' => '9999'));
+		if ($families->have_posts()) {
+			$objPHPExcel->createSheet();
+			$objPHPExcel->setActiveSheetIndex(2); 
+			$objPHPExcel->getActiveSheet()->setTitle('Familjer');
+		
+			$objPHPExcel->getActiveSheet()->setCellValue('A' . 1, "Familj")
+                						  ->setCellValue('B' . 1, "Antal barn")
+				                          ->setCellValue('C' . 1, "Antal bokade dagar")
+										  ->setCellValue('D' . 1, "Bokade dagar");
+
+			$objPHPExcel->getActiveSheet()->getStyle('A1:D1')->getFont()->setBold(true);
+		
+			$i = 2;
+			while ($families->have_posts()) {
+				$families->the_post();
+				$family_users = get_users(array('meta_key' => 'family_id', 'meta_value' => get_the_ID()));
+				$family_booked_duty_days = array();
+				foreach($family_users as $family_user) {
+					if ($user_booked_duty_days[$family_user->ID]['booked_duty_days']) {
+						$family_booked_duty_days = array_merge($family_booked_duty_days, $user_booked_duty_days[$family_user->ID]['booked_duty_days']);
+					}
+				}
+				$objPHPExcel->getActiveSheet()->setCellValue('A' . $i, get_the_title())
+				  							  ->setCellValue('B' . $i, count(get_post_meta(get_the_ID(), 'Barn')))
+											  ->setCellValue('C' . $i, count($family_booked_duty_days));
+				sort($family_booked_duty_days);
+				foreach($family_booked_duty_days as $date) {
+					$objPHPExcel->getActiveSheet()->setCellValue('D' . $i, $date);
+					$i++;
+				}
+				$i++;
+			}
 		}
 	
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -145,5 +188,16 @@ function export_duty_days() {
 		$objWriter->save('php://output');
 		exit;
 	}		
+}
+
+function delete_duty_days() {
+	if ($_GET['action'] == 'delete_duty_days') {
+		$users = get_users(array('meta_key' => 'booked_duty_days'));
+		foreach ($users as $user) { 
+			delete_user_meta($user->ID, 'booked_duty_days');
+		}
+		header('Location: ?page=book_duty_days_page');
+		exit;
+	}
 }
 ?>

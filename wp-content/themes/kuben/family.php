@@ -26,5 +26,37 @@
 		register_post_type('family', $args); 
 	}
 	
+	function custom_post_type_family_box_setup() {
+	 	add_action('add_meta_boxes', 'custom_post_type_family_add_box');
+	}
+	
+	function custom_post_type_family_add_box() {
+		add_meta_box(
+	    	'family-users-box', 
+	    	'Familj',
+	    	'custom_post_type_family_box', 
+	    	'family',
+	    	'side',
+	    	'default'
+	  	);
+	}
+	
+	function custom_post_type_family_box($object, $box) { 
+?>
+	<p><strong><?php echo $object->post_title; ?></strong></p>
+	<?php $parents = get_users(array('meta_key' => 'family_id', 'meta_value' => $object->ID)); ?>
+	<?php if (sizeof($parents) > 0) { ?>
+		<?php $map = function($p) { $d = get_userdata($p->ID); return $d->first_name." ".$d->last_name; }; ?>
+		<?php $parents = array_map($map, $parents); ?>
+		<p><strong>Föräldrar:</strong> <?php echo join($parents, ', '); ?></p>
+	<?php } ?>
+	<?php $children = get_post_meta($object->ID, 'Barn'); ?> 
+	<?php if (sizeof($children) > 0) { ?>
+		<p><strong>Barn:</strong> <?php echo join($children, ', '); ?></p>
+	<?php } ?>
+<?php 
+	}
+	
 	add_action('init', 'custom_post_type_family');
+	add_action('load-post.php', 'custom_post_type_family_box_setup' );
 ?>
