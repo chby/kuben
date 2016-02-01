@@ -65,6 +65,21 @@ function book_duty_days_page() {
 			<a href="?action=delete_duty_days" class="button button-primary">Rensa jourdagar</a>
 		</div>
 	</div>
+	<div class="postbox">
+		<div class="inside">
+			<h3 class="hndle">Föräldrar utan familjekoppling</h3>
+			<?php $parents = get_users(array('role' => 'parent')); ?>
+			<ul>
+				<?php foreach ($parents as $parent) { ?>
+					<?php $family_id = get_user_meta($parent->ID, 'family_id', true); ?>
+					<?php if (!$family_id || $family_id == "") { ?>
+						<?php $data = get_userdata($parent->ID); ?>
+						<li><a href="<?php echo get_edit_user_link($parent->ID); ?>"><?php echo $data->first_name ?> <?php echo $data->last_name ?></a></li>
+					<?php } ?>
+				<?php } ?>
+			</ul>
+		</div>
+	</div>
 </div>
 <?php 
 }
