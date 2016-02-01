@@ -3,7 +3,7 @@ Contributors: codepeople
 Donate link: http://wordpress.dwbooster.com/forms/contact-form-to-email
 Tags: contact form,contact,email,contact form database,form,contact form excel,feedback,captcha,contact form plugin,form to email,form to database,contact form builder,form to csv,wordpress contact form,csv,contact form reports,form to excel,contact form csv,drag and drop contact form,excel
 Requires at least: 3.0.5
-Tested up to: 4.3
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -43,6 +43,10 @@ In addition to that basic feature it also **saves the contact form data into a d
 * **Drag and drop contact form builder:** A basic and easy to use contact form builder for customizing the form fields and form validation.
 * **Customizable email messages:** Specify the text of the contact form email notifications. Supports both plain text emails and HTML formatted emails.
 * **Multi language support:** The contact form builder allows to enter the field labels and validations in any language. It supports special characters.
+
+ = More features = 
+ 
+ There are also commercial versions of the Contact Form to Email with other features not listed here that can be get at http://wordpress.dwbooster.com/forms/contact-form-to-email#download
 
 = Messages List =
 
@@ -150,7 +154,7 @@ The following translations are already included in the plugin:
 
 = Updates =
 
-New features has been published in the current Contact Form to Email version 1.2.1 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 105,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
+New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 180,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
 
 = New: Form Builder =
 
@@ -473,15 +477,68 @@ When you click a field already added into the contact form builder area, you can
 * Fixed conflict with zLib library
 * Update to the captcha generation to add content-length header
 
+= 1.1.7 =
+* Update to the h2-h1 tags in the admin interface
+* Fixed bug with the tabs
+* Fixed initialization bug in reports
+* Fixed typo in dutch language
+* Removed unneeded data from the post process
+
+= 1.1.8 =
+* Fixed CSV sample format
+* Updated support links
+
+= 1.1.9 =
+* Default settings updated
+
+= 1.1.10 =
+* Support new charsets
+
+= 1.1.11 =
+* Interface modifications
+
+= 1.1.12 =
+* Updates to admin interface
+
+= 1.1.13 =
+* Form validation is now activated from the form builder
+
+= 1.1.14 =
+* Tested and compatible with WordPress 4.4
+
+= 1.1.15 =
+* Fixed insert query
+
+= 1.1.16 =
+* Fixed captcha issues
+
+= 1.1.17 =
+* Optimization. Removed code from old/unused behaviors
+
+= 1.1.18 =
+* Removed old styles
+
+= 1.1.19 =
+* Fixed validation tags
+
+= 1.1.20 =
+* Fixed CSS errors and the submit button style in the new WP themes
+
+= 1.1.21 =
+* Improved captcha security
+
+= 1.1.22 =
+* Message list updates
+
+= 1.1.23 =
+* Fixed typos in French translations
+
+= 1.1.24 =
+ Fixed PHP session issues
 
 == Upgrade Notice ==
 
-= 1.1.6 =
-* Compatible with the latest WordPress 4.2.3
-* Update to messages list.
-* Better code for captcha image generation.
-* Fixed conflict with zLib library
-* Update to the captcha generation to add content-length header
-
+= 1.1.24 =
+ Fixed PHP session issues
 
 Important note: If you are using the Professional version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://wordpress.dwbooster.com/support

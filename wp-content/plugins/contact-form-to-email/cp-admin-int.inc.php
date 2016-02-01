@@ -91,6 +91,14 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         <td><textarea type="text" name="fp_message" rows="6" cols="80"><?php echo $this->get_option('fp_message', CP_CFEMAIL_DEFAULT_fp_message); ?></textarea></td>
         </tr>                                                               
      </table>  
+     
+     <div style="border:1px dotted black;padding:5px 15px 5px 15px;font-size:75%;background-color:#ffffcc">
+        <p><strong><u>Important note:</u></strong> The plugin uses the settings specified into the WordPress website to deliver the emails. 
+        It is <strong>strongly recommended to use a "from" email addresses that belongs to the website domain name</strong>, for example if your website is
+        <em>http://www.sample-website.com</em> then use an email address like <em>info@sample-website.com</em>, this will help to skip a lot of anti-spam restrictions.
+        Avoid using emails like "<em>...@gmail.com</em>", "<em>...@hotmail.com</em>", "<em>...@aol.com</em>" as "from" addresses since these are identified as originated
+        at external servers and reach to the spam folder or are completely blocked. This isn't a mandaroty requirement but it is strongly recommended.</p>       
+     </div>
   </div>    
  </div>   
  
@@ -190,7 +198,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
          
      </div>        
    
-  <div style="border:1px dotted black;background-color:#ffffaa;padding-left:15px;padding-right:15px;padding-top:5px;width:550px;font-size:12px;color:#000000;"> 
+  <div style="border:1px dotted black;background-color:#ffffaa;padding-left:15px;padding-right:15px;padding-top:5px;width:740px;font-size:12px;color:#000000;"> 
    <p>The form builder supports 3 fields in this version: "Single Line Text", "Email" and "Text-area".</p>
    <p>The full set of fields is available in the <a href="http://wordpress.dwbooster.com/forms/contact-form-to-email#download">pro version</a>. The <a href="http://wordpress.dwbooster.com/forms/contact-form-to-email#download">pro version</a> also supports:
    <ul>
@@ -240,7 +248,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
   <h3 class='hndle' style="padding:5px;"><span>Validation Settings</span></h3>
   <div class="inside">
      <table class="form-table">    
-        <tr valign="top">
+        <tr valign="top" style="display:none">
         <th scope="row">Use Validation?</th>
         <td>
           <?php $option = $this->get_option('vs_use_validation', CP_CFEMAIL_DEFAULT_vs_use_validation); ?>
@@ -420,7 +428,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         </tr>
         <tr valign="top">
         <th scope="row">Send report every</th>
-        <td><input type="text" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '1')); ?>" /> days</td>
+        <td><input type="text" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '7')); ?>" /> days</td>
         </tr>        
         <tr valign="top">
         <th scope="row">Send report after this hour (server time)</th>
@@ -464,7 +472,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <div id="metabox_basic_settings" class="postbox" >
   <h3 class='hndle' style="padding:5px;"><span>Note</span></h3>
   <div class="inside">
-   To insert this form in a post/page, use the dedicated icon <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name,'cfte').'" /></a>';     ?>
+   To insert this form in a post/page, use the dedicated icon <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name,'contact-form-to-email').'" /></a>';     ?>
    which has been added to your Upload/Insert Menu, just below the title of your Post/Page edition.
    <br /><br />
   </div>

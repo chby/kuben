@@ -37,9 +37,12 @@ jQuery(function(){
 					return opt.typeList[i].name;
 			return "";
 		}
-		for (var i=0;i<opt.typeList.length;i++)			
-			$("#tabs-1").append('<div class="button width40 '+(((i>5) || (i%2==1))?"n":"itemForm")+'" id="'+opt.typeList[i].id+'">'+opt.typeList[i].name+'</div>');
-		$("#tabs-1").append('<div class="clearer"></div>');
+		if (!opt.pub)
+		{
+		  for (var i=0;i<opt.typeList.length;i++)			
+			  $("#tabs-1").append('<div class="button width40 '+(((i>5) || (i%2==1))?"n":"itemForm")+'" id="'+opt.typeList[i].id+'">'+opt.typeList[i].name+'</div>');
+		  $("#tabs-1").append('<div class="clearer"></div>');
+		}  
 		if (!opt.pub) $( ".button").button();
 		var items = new Array();
 		var itemSelected = -2;

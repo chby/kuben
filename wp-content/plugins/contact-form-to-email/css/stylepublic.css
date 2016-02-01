@@ -13,7 +13,7 @@
 .fields.column2 .large{width:98%;}
 .fields.column3 .large{width:97%;}
 .fields.column4 .large{width:96%;}
-            
+           
 .one_column{}
 .two_column{float:left;width:48%}
 .three_column{float:left;width:30%}
@@ -30,7 +30,7 @@
 .top_aligned .fields label.cpefb_error,.left_aligned .fields label.cpefb_error,.right_aligned .fields label.cpefb_error{display: block;border:0px;color:#f00;float:none;}
 
 div.message{
-    
+   
 }
 
 div.cpefb_error{

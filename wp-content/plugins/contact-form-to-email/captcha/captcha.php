@@ -62,7 +62,7 @@ function cpcff_similarColors($c1, $c2)
 // USAGE
 // if (empty($_POST['hdcaptcha']) || $_POST['hdcaptcha'] != $_SESSION['rand_code']) header("Location: /form.html");
 
-session_start();
+if (function_exists('session_start')) @session_start();
 
 function cpcff_make_seed() {
     list($usec, $sec) = explode(' ', microtime());

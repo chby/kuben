@@ -244,7 +244,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
            <option value="yes"<?php if ($option == 'yes') echo ' selected'; ?>>Yes</option>
           </select>     
           &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-          Send report every: <input type="text" name="cp_cfte_rep_days" size="1" value="<?php echo esc_attr(get_option('cp_cfte_rep_days', '1')); ?>" /> days
+          Send report every: <input type="text" name="cp_cfte_rep_days" size="1" value="<?php echo esc_attr(get_option('cp_cfte_rep_days', '7')); ?>" /> days
           &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
           Send after this hour (server time):
           <select name="cp_cfte_rep_hour">
@@ -310,6 +310,8 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
         <option value="">Keep current charset (Recommended)</option>
         <option value="utf8_general_ci">UTF-8 (try this first)</option>
         <option value="latin1_swedish_ci">latin1_swedish_ci</option>
+        <option value="hebrew_general_ci">hebrew_general_ci</option>
+        <option value="gb2312_chinese_ci">gb2312_chinese_ci</option>        
        </select><br />
        <em>* Update the charset if you are getting problems displaying special/non-latin characters. After updated you need to edit the special characters again.</em>
        <br />
@@ -324,6 +326,6 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
 </div> 
 
 
-[<a href="http://wordpress.dwbooster.com/contact-us" target="_blank">Request Custom Modifications</a>] | [<a href="<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
+[<a href="http://wordpress.dwbooster.com/support?ref=dashboard" target="_blank">Request Custom Modifications</a>] | [<a href="<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
 </form>
 </div>

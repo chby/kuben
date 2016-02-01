@@ -64,7 +64,7 @@ if ($this->item != 0)
 
 $current_page = intval($_GET["p"]);
 if (!$current_page) $current_page = 1;
-$records_per_page = 50;                                                                                  
+$records_per_page = 25;                                                                                  
 
 $cond = '';
 if ($_GET["search"] != '') $cond .= " AND (data like '%".esc_sql($_GET["search"])."%' OR posted_data LIKE '%".esc_sql($_GET["search"])."%')";
@@ -137,8 +137,8 @@ echo paginate_links(  array(
     'end_size'     => 1,
     'mid_size'     => 2,
     'prev_next'    => True,
-    'prev_text'    => __('&laquo; Previous','cfte'),
-    'next_text'    => __('Next &raquo;','cfte'),
+    'prev_text'    => __('&laquo; Previous','contact-form-to-email'),
+    'next_text'    => __('Next &raquo;','contact-form-to-email'),
     'type'         => 'plain',
     'add_args'     => False
     ) );
@@ -198,8 +198,8 @@ echo paginate_links(  array(
       After those initial columns the fields (columns) must appear in the same order than in the form.</p>
    <p>Sample format for the CSV file:</p>
    <pre>
-    <span style="color:#009900;">2015-03-21 18:50:00, 192.168.1.12, john@sample.com,</span> "john@sample.com", "sample subject", "sample message text"
-    <span style="color:#009900;">2015-04-16 20:49:00, 192.168.1.24, jane.smith@sample.com,</span> "jane.smith@sample.com", "other subject", "other message"
+<span style="color:#009900;">2015-03-21 18:50:00, 192.168.1.12, john@sample.com,</span> "john@sample.com", "sample subject", "sample message text"
+<span style="color:#009900;">2015-04-16 20:49:00, 192.168.1.24, jane.smith@sample.com,</span> "jane.smith@sample.com", "other subject", "other message"
    </pre>
    </form>
   </div>

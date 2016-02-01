@@ -216,9 +216,6 @@ else
 
 
 <script type="text/javascript">
- function do_select_rep(item)
- {
- }
 
  function do_dexapp_print()
  {
