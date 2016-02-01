@@ -36,8 +36,8 @@ define('DB_CHARSET', 'utf8');
 /** Kollationeringstyp för databasen. Ändra inte om du är osäker. */
 define('DB_COLLATE', '');
 
-define( 'AWS_ACCESS_KEY_ID', 'AKIAIUCGNIB3YTLGLZTQ' );
-define( 'AWS_SECRET_ACCESS_KEY', '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' );
+define( 'AWS_ACCESS_KEY_ID', getenv('BUCKETEER_AWS_ACCESS_KEY_ID') );
+define( 'AWS_SECRET_ACCESS_KEY', getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY') );
 
 /**#@+
  * Unika autentiseringsnycklar och salter.
