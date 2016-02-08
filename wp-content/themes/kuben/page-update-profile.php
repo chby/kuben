@@ -61,7 +61,8 @@ if (!empty($_POST['action'])) {
 					  	<input type="hidden" name="action" value="update" />
 					  	<input type="hidden" name="checkuser_id" value="<?php echo $user_ID ?>" />
 					  	<input type="hidden" name="dashboard_url" value="<?php echo get_option("dashboard_url"); ?>" />
-					  	<input type="hidden" name="user_id" id="user_id" value="<?php echo $user_id; ?>" />
+					  	<input type="hidden" name="user_id" id="user_id" value="<?php echo $user_ID; ?>" />
+					  	<input type="hidden" name="nickname" id="nickname" value="<?php echo $userdata->nickname ?>" />
 
 
 						<?php if (is_wp_error($errors)) { ?>
