@@ -1,4 +1,5 @@
-jQuery(function(){
+jQuery.holdReady( true );
+jQuery(window).on('load', function(){
 (function($) {
 	$.fn.fbuilder = function(options){
 		var opt = $.extend({},
@@ -1324,4 +1325,5 @@ jQuery(function(){
 	    	fnum = "_"+fcount;
 	    }
 })(jQuery);
+jQuery.holdReady(false);
 });

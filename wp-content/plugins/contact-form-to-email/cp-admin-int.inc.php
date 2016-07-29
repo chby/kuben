@@ -6,6 +6,8 @@ if ( !is_admin() )
     exit;
 }
 
+$nonce = wp_create_nonce( 'cfpoll_update_actions_post' );
+
 $this->item = intval($_GET["cal"]);
     
 
@@ -24,6 +26,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 
 <form method="post" action="" name="cpformconf"> 
 <input name="<?php echo $this->prefix; ?>_post_options" type="hidden" value="1" />
+<input name="rsave" type="hidden" value="<?php echo $nonce; ?>" />
 <input name="<?php echo $this->prefix; ?>_id" type="hidden" value="<?php echo $this->item; ?>" />
 
    
@@ -115,8 +118,8 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         
      <script type="text/javascript">                 
        if (typeof jQuery === "undefined") {
-          document.write ("<"+"script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></"+"script>");
-          document.write ("<"+"script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.20/jquery-ui.min.js'></"+"script>");
+          document.write ("<"+"script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></"+"script>");
+          document.write ("<"+"script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.20/jquery-ui.min.js'></"+"script>");
        }
        $easyFormQuery = jQuery.noConflict();
        if (typeof $easyFormQuery == 'undefined')
@@ -200,7 +203,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
    
   <div style="border:1px dotted black;background-color:#ffffaa;padding-left:15px;padding-right:15px;padding-top:5px;width:740px;font-size:12px;color:#000000;"> 
    <p>The form builder supports 3 fields in this version: "Single Line Text", "Email" and "Text-area".</p>
-   <p>The full set of fields is available in the <a href="http://wordpress.dwbooster.com/forms/contact-form-to-email#download">pro version</a>. The <a href="http://wordpress.dwbooster.com/forms/contact-form-to-email#download">pro version</a> also supports:
+   <p>The full set of fields is available in the <a href="http://form2email.dwbooster.com/download">pro version</a>. The <a href="http://form2email.dwbooster.com/download">pro version</a> also supports:
    <ul>
     <li> - Dependand fields: Hide/show fields based in previous selections.</li>
     <li> - File uploads</li>
@@ -237,7 +240,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         <td colspan="2"> - The  <em>class="pbSubmit"</em> can be used to modify the button styles. <br />
         - The styles can be applied into any of the CSS files of your theme or into the CSS file <em>"contact-form-to-email\css\stylepublic.css"</em>. <br />
         - For further modifications the submit button is located at the end of the file <em>"cp-public-int.inc.php"</em>.<br />
-        - For general CSS styles modifications to the form and samples <a href="http://wordpress.dwbooster.com/faq/contact-form-to-email#q77" target="_blank">check this FAQ</a>.
+        - For general CSS styles modifications to the form and samples <a href="http://form2email.dwbooster.com/faq#q82" target="_blank">check this FAQ</a>.
         </tr>
      </table>
   </div>    
@@ -484,7 +487,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <p class="submit"><input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes"  /></p>
 
 
-[<a href="http://wordpress.dwbooster.com/support?product=contact-form-to-email&version=1.1.5&ref=dashboard-settings" target="_blank">Request Custom Modifications</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
+[<a href="http://form2email.dwbooster.com/contact-us?product=contact-form-to-email&version=1.1.5&ref=dashboard-settings" target="_blank">Request Custom Modifications</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
 </form>
 </div>
 <script type="text/javascript">generateCaptcha();</script>

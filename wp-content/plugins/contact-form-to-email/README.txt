@@ -1,14 +1,14 @@
-=== Contact Form to Email ===
+=== Contact Form Email ===
 Contributors: codepeople
-Donate link: http://wordpress.dwbooster.com/forms/contact-form-to-email
+Donate link: http://form2email.dwbooster.com/download
 Tags: contact form,contact,email,contact form database,form,contact form excel,feedback,captcha,contact form plugin,form to email,form to database,contact form builder,form to csv,wordpress contact form,csv,contact form reports,form to excel,contact form csv,drag and drop contact form,excel
 Requires at least: 3.0.5
-Tested up to: 4.4
+Tested up to: 4.5
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Contact form that sends the data to email and also to a database list and CSV file.
+Contact form that sends the data to email and also to a database list and CSV file. Contact form with form builder.
 
 == Description ==
 
@@ -26,11 +26,11 @@ Contact Form to Email features:
 	► Automatic email reports
 	► ... and more features (see below)
 
-The main purpose of the **Contact Form to Email** is, as the name indicates, to **create contact forms** and **send their data email addresses**.
+The main purpose of the **Contact Form to Email** is, as the name indicates, to create **contact forms** and **send their data email addresses**.
 
 In addition to that basic feature it also **saves the contact form data into a database**, provides **printable reports** and the option to **export selected data to CSV/Excel** files.
 
-= More about the Main Features: =
+= Contact Form to Email Main Features: =
 
 * **Email delivery / notifications:** The contact form data is sent by email to one or more email addresses. It also supports the configuration of auto-replies to the user who filled the contact form.
 * **Form data saved into the database:** Avoid losing submissions and keep a record of the received contact form messages.
@@ -44,11 +44,11 @@ In addition to that basic feature it also **saves the contact form data into a d
 * **Customizable email messages:** Specify the text of the contact form email notifications. Supports both plain text emails and HTML formatted emails.
 * **Multi language support:** The contact form builder allows to enter the field labels and validations in any language. It supports special characters.
 
- = More features = 
+ = Contact Form to Email - More features = 
  
- There are also commercial versions of the Contact Form to Email with other features not listed here that can be get at http://wordpress.dwbooster.com/forms/contact-form-to-email#download
+ There are also commercial versions of the Contact Form to Email with other features not listed here that can be get at http://form2email.dwbooster.com/download
 
-= Messages List =
+= Contact Form to Email Messages List =
 
 The messages list helps to check the past contact form submissions and print or export them. Includes a search/filter form with the following options:
 
@@ -152,7 +152,7 @@ The following translations are already included in the plugin:
 * Thai (th)
 * Ukrainian (uk)
 
-= Updates =
+= Contact Form to Email Updates =
 
 New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 180,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
 
@@ -349,7 +349,7 @@ The styles can be applied into any of the CSS files of your theme or into the CS
 
 For further modifications the submit button is located at the end of the file "cp-public-int.inc.php".
 
-For general CSS styles modifications to the form and samples check this FAQ entry: http://wordpress.dwbooster.com/faq/contact-form-to-email#q77
+For general CSS styles modifications to the form and samples check this FAQ entry: http://form2email.dwbooster.com/faq#q82
 
 
 = Customizing the automatic email reports =  
@@ -431,10 +431,6 @@ When you click a field already added into the contact form builder area, you can
 6. Built-in captcha image anti-spam protection
 
 == Changelog ==
-
-= 1.0 =
-* First Contact Form to Email stable version released.
-* More configuration options added on the contact form settings area.
 
 = 1.01 =
 * Compatible with the latest WP versions
@@ -534,11 +530,80 @@ When you click a field already added into the contact form builder area, you can
 * Fixed typos in French translations
 
 = 1.1.24 =
- Fixed PHP session issues
+* Fixed PHP session issues
+
+= 1.1.25 =
+* Shortcode paramters sanitization
+
+= 1.1.26 =
+* Updated API URLs
+
+= 1.1.27 =
+* New website & documentation links
+
+= 1.1.28 =
+* Added demo pages
+
+= 1.1.29 =
+* Added nonces and security improvements
+
+= 1.1.30 =
+* Correction to support address
+
+= 1.1.31 =
+* New filter for file uploads
+
+= 1.1.32 =
+* Compatible with WP 4.5
+
+= 1.1.33 =
+* Slashes escape fix
+
+= 1.1.34 =
+* jQuery deprecated functions replaced
+
+= 1.1.35 =
+* Fixed bug in throubleshoot area
+
+= 1.1.37 =
+* Using plugins_loaded instead init
+
+= 1.1.38 =
+* Removed unneeded tag from public from
+
+= 1.1.39 =
+* Removed old versions of Contact Form to Email
+
+= 1.1.40 =
+* New documentation
+
+= 1.1.41 =
+* "From" email address corrected
+
+= 1.1.42 =
+* IP address not included as default to avoid anti-spam issues
+
+= 1.1.43 =
+* Mail notice removed
+
+= 1.1.44 =
+* Captcha params update
+
+= 1.1.45 =
+* Auto-formatting for from email
+
+= 1.1.46 =         
+* Fix on email tags
+
+= 1.1.47 =
+*  Modified admin addr
+
+= 1.1.48 =
+*  Fixed XSS issue (Thank you to Burak Kelebek for the report)
 
 == Upgrade Notice ==
 
-= 1.1.24 =
- Fixed PHP session issues
+= 1.1.48 =
+*  Fixed XSS issue (Thank you to Burak Kelebek for the report)
 
-Important note: If you are using the Professional version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://wordpress.dwbooster.com/support
+Important note: If you are using a commercial version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://form2email.dwbooster.com/contact-us

@@ -5,7 +5,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     private $menu_parameter = 'cp_contactformtoemail';
     private $prefix = 'cp_contactformtoemail';
     private $plugin_name = 'Contact Form to Email';
-    private $plugin_URL = 'http://wordpress.dwbooster.com/forms/contact-form-to-email';
+    private $plugin_URL = 'http://form2email.dwbooster.com';
     protected $table_items = "cftemail_forms";
     private $table_messages = "cftemail_messages";
     private $print_counter = 1;
@@ -173,7 +173,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     		                           'id' => '',
     	                        ), $atts ) );
         if ($id != '')
-            $this->item = $id;
+            $this->item = intval($id);
         ob_start();
         $this->insert_public_item();
         $buffered_contents = ob_get_contents();
@@ -280,9 +280,9 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     /* Code for the admin area */
 
     public function plugin_page_links($links) {
-        $customAdjustments_link = '<a href="http://wordpress.dwbooster.com/contact-us">'.__('Request custom changes','contact-form-to-email').'</a>';
+        $customAdjustments_link = '<a href="http://form2email.dwbooster.com/contact-us">'.__('Request custom changes','contact-form-to-email').'</a>';
     	array_unshift($links, $customAdjustments_link);
-        $settings_link = '<a href="options-general.php?page='.$this->menu_parameter.'">'.__('Settings','contact-form-to-email').'</a>';
+        $settings_link = '<a href="admin.php?page='.$this->menu_parameter.'">'.__('Settings','contact-form-to-email').'</a>';
     	array_unshift($links, $settings_link);
     	$help_link = '<a href="'.$this->plugin_URL.'">'.__('Help','contact-form-to-email').'</a>';
     	array_unshift($links, $help_link);
@@ -292,8 +292,10 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
     public function admin_menu() {
         add_options_page($this->plugin_name.' Options', $this->plugin_name, 'manage_options', $this->menu_parameter, array($this, 'settings_page') );
-        add_menu_page( $this->plugin_name.' Options', $this->plugin_name, 'edit_pages', $this->menu_parameter, array($this, 'settings_page') );
-        add_submenu_page( $this->menu_parameter, 'Upgrade', 'Upgrade', 'edit_pages', $this->menu_parameter."_upgrade", array($this, 'settings_page') );
+        add_menu_page( $this->plugin_name.' Options', $this->plugin_name, 'edit_pages', $this->menu_parameter, array($this, 'settings_page') );        
+        add_submenu_page( $this->menu_parameter, 'Help: Online demo', 'Help: Online demo', 'read', $this->menu_parameter."_demo", array($this, 'settings_page') );       
+        add_submenu_page( $this->menu_parameter, 'Help: Documentation', 'Help: Documentation', 'read', $this->menu_parameter."_docs", array($this, 'settings_page') );       
+        add_submenu_page( $this->menu_parameter, 'Upgrade', 'Upgrade', 'edit_pages', $this->menu_parameter."_upgrade", array($this, 'settings_page') );        
     }
 
 
@@ -316,9 +318,19 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         }
         else if ($this->get_param("page") == $this->menu_parameter.'_upgrade')
         {
-            echo("Redirecting to upgrade page...<script type='text/javascript'>document.location='http://wordpress.dwbooster.com/forms/contact-form-to-email#download';</script>");
+            echo("Redirecting to upgrade page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/download';</script>");
             exit;
         }   
+        else if ($this->get_param("page") == $this->menu_parameter.'_demo')
+        {
+            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/home#demos';</script>");
+            exit;
+        } 
+        else if ($this->get_param("page") == $this->menu_parameter.'_docs')
+        {
+            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/documentation';</script>");
+            exit;
+        } 
         else
             @include_once dirname( __FILE__ ) . '/cp-admin-int-list.inc.php';
     }
@@ -330,7 +342,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             wp_deregister_script('query-stringify');
             wp_register_script('query-stringify', plugins_url('/js/jQuery.stringify.js', __FILE__));
             wp_enqueue_script( $this->prefix.'_builder_script', plugins_url('/js/fbuilderf.jquery.js', __FILE__),array("jquery","jquery-ui-core","jquery-ui-sortable","jquery-ui-tabs","jquery-ui-droppable","jquery-ui-button","query-stringify","jquery-ui-datepicker") );
-            wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
+            wp_enqueue_style('jquery-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
         }
         if( 'post.php' != $hook  && 'post-new.php' != $hook )
             return;
@@ -484,7 +496,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $filename = $uploadfiles['name'];
         $filetype = wp_check_filetype( basename( $filename ), null );
 
-        if ( in_array ($filetype["ext"],array("php","asp","aspx","cgi","pl","perl","exe")) )
+        if ( in_array ($filetype["ext"],array("php","asp","aspx","cgi","pl","perl","exe","cmd")) )
             return false;
         else
             return true;
@@ -532,6 +544,12 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $message = str_replace('<%itemnumber%>',$itemnumber,$message);
         $subject = str_replace('<%itemnumber%>',$itemnumber,$subject);
                 
+        for ($i=0;$i<500;$i++)
+        {
+            $subject = str_replace('<%fieldname'.$i.'%>',"",$subject);
+            $message = str_replace('<%fieldname'.$i.'%>',"",$message);  
+        }
+                
         $from = $this->get_option('fp_from_email', @CP_CFEMAIL_DEFAULT_fp_from_email);
         $to = explode(",",$this->get_option('fp_destination_emails', @CP_CFEMAIL_DEFAULT_fp_destination_emails));
         if ('html' == $this->get_option('fp_emailformat', CP_CFEMAIL_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
@@ -545,8 +563,10 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         foreach ($to as $item)
             if (trim($item) != '')
             {
+                if (!strpos($from_1,">"))
+                    $from_1 = '"'.$from_1.'" <'.$from_1.'>';                    
                 wp_mail(trim($item), $subject, $message,
-                    "From: \"$from_1\" <".$from_1.">\r\n".
+                    "From: ".$from_1."\r\n".
                     ($replyto!=''?"Reply-To: \"$replyto\" <".$replyto.">\r\n":'').
                     $content_type.
                     "X-Mailer: PHP/" . phpversion(), $attachments);
@@ -569,14 +589,24 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                 $subject = str_replace('<%'.$item.'%>',(is_array($value)?(implode(", ",$value)):($value)),$subject);
             }
             if ('html' == $this->get_option('cu_emailformat', CP_CFEMAIL_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
+    
+            for ($i=0;$i<500;$i++)
+            {
+                $subject = str_replace('<%fieldname'.$i.'%>',"",$subject);
+                $message = str_replace('<%fieldname'.$i.'%>',"",$message);  
+            }            
+            
+            if (!strpos($from,">"))
+                $from = '"'.$from.'" <'.$from.'>';
+                    
             if ($_POST[$to] != '')
                 wp_mail(trim($_POST[$to]), $subject, $message,
-                        "From: \"$from\" <".$from.">\r\n".
+                        "From: ".$from."\r\n".
                         $content_type.
                         "X-Mailer: PHP/" . phpversion());
             if ($_POST[$to] != $payer_email && $payer_email != '')
                 wp_mail(trim($payer_email), $subject, $message,
-                        "From: \"$from\" <".$from.">\r\n".
+                        "From: ".$from."\r\n".
                         $content_type.
                         "X-Mailer: PHP/" . phpversion());
         }
@@ -587,10 +617,19 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     function save_options()
     {
         global $wpdb;
+        
+        $verify_nonce = wp_verify_nonce( $_POST['rsave'], 'cfpoll_update_actions_post');
+        if (!$verify_nonce)
+        {
+            echo 'Error: Form cannot be authenticated. Please contact our <a href="http://form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+            return;
+        }
+                
         $this->item = $_POST[$this->prefix."_id"];
 
         foreach ($_POST as $item => $value)
-            $_POST[$item] = stripcslashes($value);
+            if (!is_array($value))
+                $_POST[$item] = stripcslashes($value);
 
         $this->add_field_verify($wpdb->prefix.$this->table_items, "fp_emailfrommethod", "VARCHAR(10)");
         $this->add_field_verify($wpdb->prefix.$this->table_items, "rep_enable", "VARCHAR(10)");
@@ -675,7 +714,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
 
     function generateSafeFileName($filename) {
-        $filename = strtolower($filename);
+        $filename = strtolower(strip_tags($filename));
+        $filename = str_replace(";","_",$filename);
         $filename = str_replace("#","_",$filename);
         $filename = str_replace(" ","_",$filename);
         $filename = str_replace("'","",$filename);
@@ -947,7 +987,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                                 "From: \"".$form->fp_from_email."\" <".$form->fp_from_email.">\r\n".
                                 $content_type.
                                 "X-Mailer: PHP/" . phpversion(),
-                                $attachments);
+                                @$attachments);
                     }
                 }
             } // end foreach

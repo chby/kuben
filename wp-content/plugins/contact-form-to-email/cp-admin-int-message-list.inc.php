@@ -34,9 +34,9 @@ else if (isset($_GET['import']) && $_GET['import'] == '1')
             $num = count($data);
             $row++;
             
-            $time  = $data[0];
-            $ip    = $data[1];
-            $email = $data[2];
+            $time  = strip_tags($data[0]);
+            $ip    = strip_tags($data[1]);
+            $email = strip_tags($data[2]);
             
             for ($c=3; $c < $num; $c++)
                 if (isset($form[$c-3]))
@@ -82,13 +82,13 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
 <script type="text/javascript">
  function cp_updateMessageItem(id,status)
  {    
-    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $_GET["cal"]; ?>&list=1&status='+status+'&lu='+id+'&r='+Math.random( );   
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $this->item; ?>&list=1&status='+status+'&lu='+id+'&r='+Math.random( );   
  } 
  function cp_deleteMessageItem(id)
  {
     if (confirm('Are you sure that you want to delete this item?'))
     {        
-        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $_GET["cal"]; ?>&list=1&ld='+id+'&r='+Math.random();
+        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $this->item; ?>&list=1&ld='+id+'&r='+Math.random();
     }
  }
 </script>

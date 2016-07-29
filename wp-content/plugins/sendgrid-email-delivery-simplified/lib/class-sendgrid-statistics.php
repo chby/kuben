@@ -90,7 +90,7 @@ class Sendgrid_Statistics
     $apikey = Sendgrid_Tools::get_api_key();
     if ( ( "apikey" == Sendgrid_Tools::get_auth_method() ) and isset( $apikey ) and ( $apikey != '' ) and ! Sendgrid_Tools::check_api_key_stats( $apikey, true ) )
     {
-      $message = 'Your Api key is not having statistics permissions';
+      $message = 'Your Api key does not have statistics permissions';
       $status  = 'error';
     }
 
@@ -109,12 +109,12 @@ class Sendgrid_Statistics
     }
 
     // Javascript
-    wp_enqueue_script( 'sendgrid-stats', plugin_dir_url( __FILE__ ) . '../view/js/sendgrid.stats-v1.7.0.js', array('jquery') );
+    wp_enqueue_script( 'sendgrid-stats', plugin_dir_url( __FILE__ ) . '../view/js/sendgrid.stats-v1.7.3.js', array('jquery') );
     wp_enqueue_script( 'jquery-flot', plugin_dir_url( __FILE__ ) . '../view/js/jquery.flot.js', array('jquery') );
     wp_enqueue_script( 'jquery-flot-time', plugin_dir_url( __FILE__ ) . '../view/js/jquery.flot.time.js', array('jquery') );
     wp_enqueue_script( 'jquery-flot-tofflelegend', plugin_dir_url( __FILE__ ) . '../view/js/jquery.flot.togglelegend.js', array('jquery') );
     wp_enqueue_script( 'jquery-flot-symbol', plugin_dir_url( __FILE__ ) . '../view/js/jquery.flot.symbol.js', array('jquery') );
-    wp_enqueue_script('jquery-ui-datepicker', plugin_dir_url( __FILE__ ) . '../view/js/jquery.ui.datepicker.js', array('jquery', 'jquery-ui-core') );
+    wp_enqueue_script( 'jquery-ui-datepicker', plugin_dir_url( __FILE__ ) . '../view/js/jquery.ui.datepicker.js', array('jquery', 'jquery-ui-core') );
 
     // CSS
     wp_enqueue_style( 'jquery-ui-datepicker', plugin_dir_url( __FILE__ ) . '../view/css/datepicker/smoothness/jquery-ui-1.10.3.custom.css' );
