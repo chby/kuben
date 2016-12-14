@@ -11,12 +11,7 @@ $this->item = intval($_GET["cal"]);
 global $wpdb;
 
 if ($this->item != 0)
-    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.$this->item);
-
-
-$current_page = intval($_GET["p"]);
-if (!$current_page) $current_page = 1;
-$records_per_page = 50;                                                                                  
+    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.$this->item);                                                                              
 
 $date_start = '';
 $date_end = '';
@@ -26,13 +21,14 @@ if ($_GET["search"] != '') $cond .= " AND (data like '%".esc_sql($_GET["search"]
 if ($_GET["dfrom"] != '') 
 { 
     $cond .= " AND (`time` >= '".esc_sql($_GET["dfrom"])."')";
-    $date_start = $_GET["dfrom"];
+    $date_start = strip_tags($_GET["dfrom"]);
 }    
 if ($_GET["dto"] != '') 
 {
     $cond .= " AND (`time` <= '".esc_sql($_GET["dto"])." 23:59:59')";
-    $date_end = $_GET["dto"];
+    $date_end = strip_tags($_GET["dto"]);
 }    
+if (isset($_GET["field"])) $_GET["field"] = strip_tags($_GET["field"]);
 if ($this->item != 0) $cond .= " AND formid=".$this->item;
 
 $events = $wpdb->get_results( "SELECT ipaddr,time,notifyto,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" );
@@ -111,10 +107,10 @@ else
  <input type="hidden" name="page" value="<?php echo $this->menu_parameter; ?>" />
  <input type="hidden" name="cal" value="<?php echo $this->item; ?>" />
  <input type="hidden" name="report" value="1" />
- <input type="hidden" name="field" value="<?php echo esc_attr($_GET["field"]); ?>" />
+ <input type="hidden" name="field" value="<?php echo esc_attr(strip_tags($_GET["field"])); ?>" />
  <nobr>Search for: <input type="text" name="search" value="<?php echo esc_attr($_GET["search"]); ?>" /> &nbsp; &nbsp; &nbsp;</nobr> 
- <nobr>From: <input type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr($_GET["dfrom"]); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
- <nobr>To: <input type="text" id="dto" name="dto" value="<?php echo esc_attr($_GET["dto"]); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
+ <nobr>From: <input type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr(strip_tags($_GET["dfrom"])); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
+ <nobr>To: <input type="text" id="dto" name="dto" value="<?php echo esc_attr(strip_tags($_GET["dto"])); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
  <nobr>Item: <select id="cal" name="cal">
           <option value="0">[All Items]</option>
    <?php
@@ -136,7 +132,7 @@ else
  <div class="canvas" id="cardiocontainer1" style="margin-left:10px;">
   <canvas id="cardio1"  width="300" height="200" questions='[{"color":"#00f","values":[<?php echo $daily_messages; ?>]}]'></canvas>
  </div>
- <div style="padding-right:5px;padding-left:5px;color:#888888;">* Submissions per day in the selected date range.<br />&nbsp;&nbsp; Days from <?php echo $date_start; ?> to <?php echo $date_end; ?>.</div>
+ <div style="padding-right:5px;padding-left:5px;color:#888888;">* Submissions per day in the selected date range.<br />&nbsp;&nbsp; Days from <?php echo strip_tags($date_start); ?> to <?php echo strip_tags($date_end); ?>.</div>
 </div> 
 
 <div style="border:1px solid black;width:330px;margin:0px;padding:0px;float:left;"> 
@@ -201,7 +197,7 @@ else
 ?>
 </div>
 
- <div style="padding-right:5px;padding-left:5px;color:#888888;">&nbsp;&nbsp;* Number of times that appears each value. Percent in relation to the total of submissions.<br />&nbsp;&nbsp;&nbsp;&nbsp; Date range from <?php echo $date_start; ?> to <?php echo $date_end; ?>.</div>
+ <div style="padding-right:5px;padding-left:5px;color:#888888;">&nbsp;&nbsp;* Number of times that appears each value. Percent in relation to the total of submissions.<br />&nbsp;&nbsp;&nbsp;&nbsp; Date range from <?php echo strip_tags($date_start); ?> to <?php echo strip_tags($date_end); ?>.</div>
 </div>
 
 

@@ -38,6 +38,11 @@ function jr_ps_settings_page() {
 	add_thickbox();
 	echo '<div class="wrap">';
 	echo '<h2>' . $jr_ps_plugin_data['Name'] . '</h2>';	
+		?>
+	<p>
+	Support has moved to the ZATZLabs site and is no longer provided on the WordPress.org forums. Please visit the new <A HREF=“http://zatzlabs.com/forums/“>ZATZLab Forums</a>. If you need a timely reply from the developer, please <a href=“http://zatzlabs.com/submit-ticket/“>open a ticket</a>.
+	</p>
+	<?php	
 	echo '<h3>Overview</h3><p>';
 	$settings = get_option( 'jr_ps_settings' );
 	if ( $settings['private_site'] ) {

@@ -3,7 +3,7 @@ Contributors: codepeople
 Donate link: http://form2email.dwbooster.com/download
 Tags: contact form,contact,email,contact form database,form,contact form excel,feedback,captcha,contact form plugin,form to email,form to database,contact form builder,form to csv,wordpress contact form,csv,contact form reports,form to excel,contact form csv,drag and drop contact form,excel
 Requires at least: 3.0.5
-Tested up to: 4.5
+Tested up to: 4.7
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -154,7 +154,7 @@ The following translations are already included in the plugin:
 
 = Contact Form to Email Updates =
 
-New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 180,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
+New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 500,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
 
 = New: Form Builder =
 
@@ -601,9 +601,66 @@ When you click a field already added into the contact form builder area, you can
 = 1.1.48 =
 *  Fixed XSS issue (Thank you to Burak Kelebek for the report)
 
+= 1.1.49 =
+* Compatible with WP 4.6
+
+= 1.1.50 =
+* Fixed XSS issue. Thank you to Netsparker Ltd (netsparker.com) for the notification.
+
+= 1.1.51 =
+* New customization form
+
+= 1.1.52 =
+* Modified processing of posted data
+
+= 1.1.53 =
+* IP addr database update
+
+= 1.1.54 =
+* Fixed magic quotes issue
+
+= 1.1.55 =
+* More fixes for magic quotes issue
+
+= 1.1.56 =
+* Roll back to incorrect update
+
+= 1.1.57 =
+* Interface update
+
+= 1.1.58 =
+* Fix to visualization bug in Firefox
+
+= 1.1.59 =
+* French language corrections
+
+= 1.1.60 =
+* Code optimizations
+
+= 1.1.61 =
+* Improved support tracking
+
+= 1.1.62 =
+* Fixed database error on IP v6 networks
+
+= 1.1.63 =
+* Database improvements
+
+= 1.1.64 =
+* Doc link updated
+
+= 1.1.65 =
+* Database fix
+
+= 1.1.66 =
+* Compatible with WP 4.7
+
+= 1.1.67 =
+* Fixes to filename generation
+
 == Upgrade Notice ==
 
-= 1.1.48 =
-*  Fixed XSS issue (Thank you to Burak Kelebek for the report)
+= 1.1.67 =
+* Fixes to filename generation
 
 Important note: If you are using a commercial version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://form2email.dwbooster.com/contact-us

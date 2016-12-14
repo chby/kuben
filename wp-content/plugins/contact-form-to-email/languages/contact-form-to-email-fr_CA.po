@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contact Form to Email\n"
 "POT-Creation-Date: 2013-09-01 17:05+0100\n"
-"PO-Revision-Date: 2016-07-25 17:50+0200\n"
+"PO-Revision-Date: 2016-11-02 10:32+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgid "Incorrect captcha code. Please try again."
 msgstr "Captcha code incorrect. Se il vous plait essayer à nouveau."
 
 msgid "Please enter the security code"
-msgstr "S'il vous plaît entrer le code de sécurité"
+msgstr "Merci d'entrer le code de sécurité"
 
 # RevTran=Security code
 msgid "Security Code"

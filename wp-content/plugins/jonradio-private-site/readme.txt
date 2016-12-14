@@ -3,8 +3,8 @@ Contributors: dgewirtz
 Donate link: http://zatzlabs.com/lab-notes/
 Tags: login, visibility, private, security, plugin, pages, page, posts, post
 Requires at least: 3.0
-Tested up to: 4.2
-Stable tag: 2.14
+Tested up to: 4.6
+Stable tag: 2.14.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Create a Private Site visible only to your registered users.
 
 == Description ==
 
-*Formerly: "jonradio Private Site"*
+**IMPORTANT: Support has moved to the ZATZLabs site and is no longer provided on the WordPress.org forums. Please visit the new [ZATZLabs Forums](http://zatzlabs.com/forums/). If you need a timely reply from the developer, please [open a ticket](http://zatzlabs.com/submit-ticket/).**
 
 Allows the Administrator to restrict a WordPress-based web site to viewing only by registered users who are logged on.  Any attempt, by anyone not logged, to view any Page, Post or other part of the site will display a WordPress login screen.
 
@@ -48,6 +48,8 @@ Special thanks to Jon 'jonradio' Pearkins for creating the plugin and making ado
 
 == Installation ==
 
+**IMPORTANT: Support has moved to the ZATZLabs site and is no longer provided on the WordPress.org forums. Please visit the new [ZATZLabs Forums](http://zatzlabs.com/forums/). If you need a timely reply from the developer, please [open a ticket](http://zatzlabs.com/submit-ticket/).**
+
 This section describes how to install the *jonradio Private Site* plugin and get it working.
 
 1. Use **Add Plugin** within the WordPress Admin panel to download and install this *jonradio Private Site* plugin from the WordPress.org plugin repository (preferred method).  Or download and unzip this plugin, then upload the `/jonradio-private-site/` directory to your WordPress web site's `/wp-content/plugins/` directory
@@ -56,6 +58,8 @@ This section describes how to install the *jonradio Private Site* plugin and get
 1. If you allow Self-Registration, where new Users can set up their own User Name on your WordPress site or Network, you will want to select **Reveal User Registration Page** on the plugin's Settings page.
 
 == Frequently Asked Questions ==
+
+**IMPORTANT: Support has moved to the ZATZLabs site and is no longer provided on the WordPress.org forums. Please visit the new [ZATZLabs Forums](http://zatzlabs.com/forums/). If you need a timely reply from the developer, please [open a ticket](http://zatzlabs.com/submit-ticket/).**
 
 = How do I fix Redirect Loops (browser cycles for a long time then gives up)? =
 
@@ -72,6 +76,9 @@ Whenever you change your WordPress Permalinks (Settings-Permalinks in Admin pane
 At user request, to reduce clutter.
 
 == Changelog ==
+
+= 2.14.1 =
+* Minor support update
 
 = 2.14 =
 * Force login at 'get_header' instead of 'template_redirect' Action to be compatible with wpengine.com hosting

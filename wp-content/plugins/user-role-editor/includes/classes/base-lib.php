@@ -226,23 +226,6 @@ class URE_Base_Lib {
     }
     // end of check_version()
 
-    /**
-     * returns 'selected' HTML cluster if $value matches to $etalon
-     * 
-     * @param string $value
-     * @param string $etalon
-     * @return string
-     */
-    public function option_selected($value, $etalon) {
-        $selected = '';
-        if (strcasecmp($value, $etalon) == 0) {
-            $selected = 'selected="selected"';
-        }
-
-        return $selected;
-    }
-    // end of option_selected()
-
 
     public function get_current_url() {
         global $wp;
@@ -252,6 +235,34 @@ class URE_Base_Lib {
     }
     // end of get_current_url()
 
+    
+    /**
+     * Returns comma separated list from the first $items_count element of $full_list array
+     * 
+     * @param array $full_list
+     * @param int $items_count
+     * @return string
+     */
+    public function get_short_list_str($full_list, $items_count=3) {
+     
+        $short_list = array(); $i = 0;
+        foreach($full_list as $key=>$item) {            
+            if ($i>=$items_count) {
+                break;
+            }
+            $short_list[] = $item;
+            $i++;
+        }
+        
+        $str = implode(', ', $short_list);
+        if ($items_count<count($full_list)) {
+            $str .= '...';
+        }
+        
+        return $str;
+    }    
+    //  end of get_short_list_str()
+    
     
     /**
      * Private clone method to prevent cloning of the instance of the

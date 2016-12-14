@@ -24,7 +24,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 formid INT NOT NULL,
                 time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-                ipaddr VARCHAR(32) DEFAULT '' NOT NULL,
+                ipaddr VARCHAR(250) DEFAULT '' NOT NULL,
                 notifyto VARCHAR(250) DEFAULT '' NOT NULL,
                 data mediumtext,
                 posted_data mediumtext,
@@ -49,14 +49,14 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                  fp_inc_additional_info VARCHAR(10) DEFAULT '' NOT NULL,
                  fp_return_page VARCHAR(250) DEFAULT '' NOT NULL,
                  fp_message text,
-                 fp_emailformat VARCHAR(10) DEFAULT '' NOT NULL,
+                 fp_emailformat VARCHAR(20) DEFAULT '' NOT NULL,
 
                  cu_enable_copy_to_user VARCHAR(10) DEFAULT '' NOT NULL,
                  cu_user_email_field VARCHAR(250) DEFAULT '' NOT NULL,
                  cu_subject VARCHAR(250) DEFAULT '' NOT NULL,
                  cu_message text,
-                 cu_emailformat VARCHAR(10) DEFAULT '' NOT NULL,
-                 fp_emailfrommethod VARCHAR(10) DEFAULT '' NOT NULL,
+                 cu_emailformat VARCHAR(20) DEFAULT '' NOT NULL,
+                 fp_emailfrommethod VARCHAR(20) DEFAULT '' NOT NULL,
 
                  vs_use_validation VARCHAR(10) DEFAULT '' NOT NULL,
                  vs_text_is_required VARCHAR(250) DEFAULT '' NOT NULL,
@@ -236,7 +236,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                 return false;
             } else <?php } ?>
             {
-                document.getElementById("form_structure<?php echo '_'.$this->print_counter; ?>").value = '';    
+                /**document.getElementById("form_structure<?php echo '_'.$this->print_counter; ?>").value = '';    */
                 return true;
             }    
          }
@@ -280,7 +280,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     /* Code for the admin area */
 
     public function plugin_page_links($links) {
-        $customAdjustments_link = '<a href="http://form2email.dwbooster.com/contact-us">'.__('Request custom changes','contact-form-to-email').'</a>';
+        $customAdjustments_link = '<a href="http://form2email.dwbooster.com/download">'.__('Upgrade To Premium','contact-form-to-email').'</a>';
     	array_unshift($links, $customAdjustments_link);
         $settings_link = '<a href="admin.php?page='.$this->menu_parameter.'">'.__('Settings','contact-form-to-email').'</a>';
     	array_unshift($links, $settings_link);
@@ -328,7 +328,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         } 
         else if ($this->get_param("page") == $this->menu_parameter.'_docs')
         {
-            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/documentation';</script>");
+            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/documentation?open=1';</script>");
             exit;
         } 
         else
@@ -415,8 +415,9 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             exit;
     	}
 
-        foreach ($_POST as $item => $value)
-            $_POST[$item] = (is_array($value)?$value:stripcslashes($value));
+        //if (get_magic_quotes_gpc())
+            foreach ($_POST as $item => $value)
+                $_POST[$item] = (is_array($value)?$value:stripcslashes($value));
             
         // get form info
         //---------------------------
@@ -467,6 +468,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
         // insert into database
         //---------------------------
+        $wpdb->query("ALTER TABLE ".$wpdb->prefix.$this->table_messages." CHANGE `ipaddr` `ipaddr` VARCHAR(250)");
         $to = $this->get_option('cu_user_email_field', CP_CFEMAIL_DEFAULT_cu_user_email_field);
         $rows_affected = $wpdb->insert( $wpdb->prefix.$this->table_messages, array( 'formid' => $this->item,
                                                                                     'time' => current_time('mysql'),
@@ -626,10 +628,11 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         }
                 
         $this->item = $_POST[$this->prefix."_id"];
-
-        foreach ($_POST as $item => $value)
-            if (!is_array($value))
-                $_POST[$item] = stripcslashes($value);
+        
+        if (substr_count($_POST['form_structure'],"\\") > 30)
+            foreach ($_POST as $item => $value)
+                if (!is_array($value))
+                    $_POST[$item] = stripcslashes($value);
 
         $this->add_field_verify($wpdb->prefix.$this->table_items, "fp_emailfrommethod", "VARCHAR(10)");
         $this->add_field_verify($wpdb->prefix.$this->table_items, "rep_enable", "VARCHAR(10)");
@@ -727,6 +730,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $filename = str_replace("?","",$filename);
         $filename = str_replace("%","_",$filename);
         $filename = str_replace("=","_",$filename);
+        $filename = str_replace(">","",$filename);
+        $filename = str_replace("<","",$filename);
         return $filename;
     }
 
