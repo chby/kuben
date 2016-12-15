@@ -9,10 +9,10 @@
 		$data = get_userdata($user->ID);
 		$meta = get_user_meta($user->ID, 'booked_duty_days', true);
 		if (in_array($tomorrow, $meta)) {
-			$text = "Du är bokad för jour imorgon på Kuben (".$tomorrow.")";
+			$text = "Du är bokad för jour imorgon på Kuben (".$tomorrow.").\n\nDu kommer att bli kontaktad innan kl 8.00 imorgon bitti om vi behöver din hjälp på Kuben.";
 			$mobile = get_user_meta($user->ID, 'mobile', true);
 			if ($mobile) { 
-				send_sms($mobile, $text);
+				send_sms($mobile, "Du är bokad för jour imorgon på Kuben (".$tomorrow.")");
 			}
 			wp_mail($user->user_email, "[Kubens föräldrawebb] Du är bokad för jour imorgon", $text);
 		}
