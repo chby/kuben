@@ -54,7 +54,7 @@ Template Name: Todo List
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th>Todos</th>
+								<th>Att göra</th>
 							</tr>
 						</thead>
 					<tbody>
