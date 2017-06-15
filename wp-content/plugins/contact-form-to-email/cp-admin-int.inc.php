@@ -21,7 +21,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <div class="wrap">
 <h1><?php echo $this->plugin_name; ?></h1>
 
-<input type="button" name="backbtn" value="Back to items list..." onclick="document.location='options-general.php?page=<?php echo $this->menu_parameter; ?>';">
+<input type="button" name="backbtn" value="Back to items list..." onclick="document.location='admin.php?page=<?php echo $this->menu_parameter; ?>';">
 <br /><br />
 
 <form method="post" action="" name="cpformconf"> 
@@ -55,11 +55,11 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         </tr>       
         <tr valign="top">
         <th scope="row">"From" email (for fixed "from" addresses)</th>
-        <td><input type="text" name="fp_from_email" size="40" value="<?php echo esc_attr($this->get_option('fp_from_email', CP_CFEMAIL_DEFAULT_fp_from_email)); ?>" /></td>
+        <td><input required type="email" name="fp_from_email" size="40" value="<?php echo esc_attr($this->get_option('fp_from_email', CP_CFEMAIL_DEFAULT_fp_from_email)); ?>" /></td>
         </tr>             
         <tr valign="top">
         <th scope="row">Destination emails (comma separated)</th>
-        <td><input type="text" name="fp_destination_emails" size="40" value="<?php echo esc_attr($this->get_option('fp_destination_emails', CP_CFEMAIL_DEFAULT_fp_destination_emails)); ?>" /></td>
+        <td><input required type="text" name="fp_destination_emails" size="40" value="<?php echo esc_attr($this->get_option('fp_destination_emails', CP_CFEMAIL_DEFAULT_fp_destination_emails)); ?>" /></td>
         </tr>
         <tr valign="top">
         <th scope="row">Email subject</th>
@@ -110,14 +110,12 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
   <h3 class='hndle' style="padding:5px;"><span>Form Builder</span></h3>
   <div class="inside">   
 
-     <input type="hidden" name="form_structure" id="form_structure" size="180" value="<?php echo str_replace('"','&quot;',str_replace("\r","",str_replace("\n","",esc_attr($this->cleanJSON($this->get_option('form_structure', CP_CFEMAIL_DEFAULT_form_structure)))))); ?>" />
-     
-     <link href="<?php echo plugins_url('css/style.css', __FILE__); ?>" type="text/css" rel="stylesheet" />   
-     <link href="<?php echo plugins_url('css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__); ?>" type="text/css" rel="stylesheet" />   
-        
+     <input type="hidden" name="form_structure" id="form_structure" size="180" value="<?php echo str_replace('"','&quot;',str_replace("\r","",str_replace("\n","",esc_attr($this->cleanJSON($this->get_option('form_structure', CP_CFEMAIL_DEFAULT_form_structure)))))); ?>" />             
         
      <script type="text/javascript">                 
        if (typeof jQuery === "undefined") {
+          // This code won't be used in most cases. This code is for preventing problems in wrong WP themes and conflicts with third party plugins.                  
+          // In some cases a third party plugin or WP theme affect the expected jQuery scripts, this code autodetect that and provide an alternative solution
           document.write ("<"+"script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></"+"script>");
           document.write ("<"+"script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.20/jquery-ui.min.js'></"+"script>");
        }
@@ -125,6 +123,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
        if (typeof $easyFormQuery == 'undefined')
        {
           // This code won't be used in most cases. This code is for preventing problems in wrong WP themes and conflicts with third party plugins.                  
+          // In some cases a third party plugin or WP theme affect the expected jQuery scripts, this code autodetect that and provide an alternative solution
           document.write ("<"+"script type='text/javascript' src='<?php echo plugins_url('js/jQuery.stringify.js', __FILE__); ?>'></"+"script>");
           document.write ("<"+"script type='text/javascript' src='<?php echo plugins_url('js/jquery.validate.js', __FILE__); ?>'></"+"script>");         
           document.write ("<"+"script type='text/javascript' src='<?php echo plugins_url('js/fbuilderf.jquery.js', __FILE__); ?>'></"+"script>");         
@@ -237,6 +236,13 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         <td><input type="text" name="vs_text_nextbtn" size="40" value="<?php $label = esc_attr($this->get_option('vs_text_nextbtn', 'Next')); echo ($label==''?'Next':$label); ?>" /></td>
         </tr>  
         <tr valign="top">
+        <th scope="row">Page {0} of {0} (text):</th>
+        <td><input type="text" name="vs_text_page" size="6" value="<?php $label = esc_attr($this->get_option('vs_text_page', 'Page')); echo ($label==''?'Page':$label); ?>" />
+            X 
+            <input type="text" name="vs_text_of" size="3" value="<?php $label = esc_attr($this->get_option('vs_text_of', 'of')); echo ($label==''?'of':$label); ?>" />
+            Y</td>
+        </tr>         
+        <tr valign="top">
         <td colspan="2"> - The  <em>class="pbSubmit"</em> can be used to modify the button styles. <br />
         - The styles can be applied into any of the CSS files of your theme or into the CSS file <em>"contact-form-to-email\css\stylepublic.css"</em>. <br />
         - For further modifications the submit button is located at the end of the file <em>"cp-public-int.inc.php"</em>.<br />
@@ -257,7 +263,6 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
           <?php $option = $this->get_option('vs_use_validation', CP_CFEMAIL_DEFAULT_vs_use_validation); ?>
           <select name="vs_use_validation">
            <option value="true"<?php if ($option == 'true') echo ' selected'; ?>>Yes</option>
-           <!--<option value="false"<?php if ($option == 'false') echo ' selected'; ?>>No</option>-->
           </select>
         </td>
         </tr>
@@ -487,7 +492,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 <p class="submit"><input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes"  /></p>
 
 
-[<a href="http://form2email.dwbooster.com/contact-us?product=contact-form-to-email&version=1.1.61&ref=dashboard-settings" target="_blank">Request Custom Modifications</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
+[<a href="https://wordpress.org/support/plugin/contact-form-to-email#new-post" target="_blank">Support</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
 </form>
 </div>
 <script type="text/javascript">generateCaptcha();</script>

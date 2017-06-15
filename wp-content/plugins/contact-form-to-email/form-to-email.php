@@ -3,9 +3,9 @@
 Plugin Name: Contact Form Email
 Plugin URI: http://form2email.dwbooster.com/download
 Description: Contact form that sends the data to email and also to a database list and CSV file.
-Version: 1.1.67
-Author: CodePeople.net
-Author URI: http://codepeople.net
+Version: 1.1.97
+Author: CodePeople
+Author URI: http://form2email.dwbooster.com
 Text Domain: contact-form-to-email
 License: GPL
 */
@@ -14,7 +14,7 @@ define('CP_CFEMAIL_DEFER_SCRIPTS_LOADING', (get_option('CP_CFTE_LOAD_SCRIPTS',"1
 
 define('CP_CFEMAIL_DEFAULT_form_structure', '[[{"name":"email","index":0,"title":"Email","ftype":"femail","userhelp":"","csslayout":"","required":true,"predefined":"","size":"medium"},{"name":"subject","index":1,"title":"Subject","required":true,"ftype":"ftext","userhelp":"","csslayout":"","predefined":"","size":"medium"},{"name":"message","index":2,"size":"large","required":true,"title":"Message","ftype":"ftextarea","userhelp":"","csslayout":"","predefined":""}],[{"title":"Contact Form","description":"","formlayout":"top_aligned"}]]');
 
-define('CP_CFEMAIL_DEFAULT_fp_subject', 'Contact from the blog...');
+define('CP_CFEMAIL_DEFAULT_fp_subject', 'Contact from the website...');
 define('CP_CFEMAIL_DEFAULT_fp_inc_additional_info', 'false');
 define('CP_CFEMAIL_DEFAULT_fp_return_page', get_site_url());
 define('CP_CFEMAIL_DEFAULT_fp_message', "The following contact message has been sent:\n\n<%INFO%>\n\n");
@@ -30,8 +30,8 @@ define('CP_CFEMAIL_DEFAULT_vs_use_validation', 'true');
 define('CP_CFEMAIL_DEFAULT_vs_text_is_required', 'This field is required.');
 define('CP_CFEMAIL_DEFAULT_vs_text_is_email', 'Please enter a valid email address.');
 
-define('CP_CFEMAIL_DEFAULT_vs_text_datemmddyyyy', 'Please enter a valid date with this format(mm/dd/yyyy)');
-define('CP_CFEMAIL_DEFAULT_vs_text_dateddmmyyyy', 'Please enter a valid date with this format(dd/mm/yyyy)');
+define('CP_CFEMAIL_DEFAULT_vs_text_datemmddyyyy', 'Please enter a valid date with the format mm/dd/yyyy');
+define('CP_CFEMAIL_DEFAULT_vs_text_dateddmmyyyy', 'Please enter a valid date with the format dd/mm/yyyy');
 define('CP_CFEMAIL_DEFAULT_vs_text_number', 'Please enter a valid number.');
 define('CP_CFEMAIL_DEFAULT_vs_text_digits', 'Please enter only digits.');
 define('CP_CFEMAIL_DEFAULT_vs_text_max', 'Please enter a value less than or equal to %0%.');
@@ -74,5 +74,9 @@ if ( is_admin() ) {
 } else {    
     add_shortcode( $cp_plugin->shorttag, array($cp_plugin, 'filter_content') );    
 }  
+
+require_once 'banner.php';
+$codepeople_promote_banner_plugins[ 'contact-form-to-email' ] = array( 'plugin_name' => 'Contact Form Email', 'plugin_url'  => 'https://wordpress.org/support/plugin/contact-form-to-email/reviews/#new-post');
+
 
 ?>

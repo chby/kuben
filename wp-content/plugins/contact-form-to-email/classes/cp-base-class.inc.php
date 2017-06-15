@@ -1,6 +1,7 @@
 <?php
-         
 
+if( !class_exists( 'CP_CFTEMAIL_BaseClass' ) ) {         
+    
 class CP_CFTEMAIL_BaseClass {       
 
     protected $item = 1;
@@ -82,10 +83,11 @@ class CP_CFTEMAIL_BaseClass {
     function add_field_verify ($table, $field, $type = "text") 
     {
         global $wpdb;
-        $results = $wpdb->get_results("SHOW columns FROM `".$table."` where field='".$field."'");    
+        
+        $results = $wpdb->get_results( $wpdb->prepare("SHOW columns FROM `".esc_sql($table)."` where field=%s", $field) );    
         if (!count($results))
         {               
-            $sql = "ALTER TABLE  `".$table."` ADD `".$field."` ".$type; 
+            $sql = "ALTER TABLE  `".esc_sql($table)."` ADD `".esc_sql($field)."` ".$type; 
             $wpdb->query($sql);
             return true;
         }
@@ -103,8 +105,8 @@ class CP_CFTEMAIL_BaseClass {
         if ($this->option_buffered_id == $this->item)
             $value = @$this->option_buffered_item->$field;
         else
-        {  
-           $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".$this->item );
+        {              
+           $myrows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=%d", $this->item ) );
            $value = @$myrows[0]->$field;           
            $this->option_buffered_item = $myrows[0];
            $this->option_buffered_id  = $this->item;
@@ -114,7 +116,31 @@ class CP_CFTEMAIL_BaseClass {
         return $value;
     }
     
+    
+    function getRealUserIP()
+    {
+        $client  = @$_SERVER['HTTP_CLIENT_IP'];
+        $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+        $remote  = $_SERVER['REMOTE_ADDR'];
+    
+        if(filter_var($client, FILTER_VALIDATE_IP))
+        {
+            $ip = $client;
+        }
+        elseif(filter_var($forward, FILTER_VALIDATE_IP))
+        {
+            $ip = $forward;
+        }
+        else
+        {
+            $ip = $remote;
+        }
+    
+        return $ip;
+    }
        
 } // end class
+
+} // end if class exists
 
 ?>

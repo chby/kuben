@@ -1,5 +1,5 @@
 <?php if ( $active_tab == 'marketing' ): ?>
-  <form class="form-table" name="sendgrid_form" id="sendgrid_form_mc" method="POST" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ); ?>">
+  <form class="form-table" name="sendgrid_form" id="sendgrid_form_mc" method="POST" action="<?php echo Sendgrid_Tools::get_form_action(); ?>">
     <table class="form-table">
       <tbody>
         <tr valign="top">
@@ -38,7 +38,7 @@
                     echo '<option value="' . $list['id'] . '" selected="selected">' . $list['name'] . '</option>';
                   } else {
                     echo '<option value="' . $list['id'] . '">' . $list['name'] . '</option>';
-                  }           
+                  }
                 }
               }
             ?>
@@ -104,7 +104,7 @@
                     echo '<option value="' . $page->ID . '" selected="selected">' . $page->post_title . '</option>';
                   } else {
                     echo '<option value="' . $page->ID . '">' . $page->post_title . '</option>';
-                  }           
+                  }
                 }
               }
             ?>

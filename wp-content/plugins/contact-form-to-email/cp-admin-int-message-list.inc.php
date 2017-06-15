@@ -12,18 +12,25 @@ global $wpdb;
 
 $message = "";
 
-if (isset($_GET['lu']) && $_GET['lu'] != '')
+if (isset($_GET['ld']) && $_GET['ld'] != '')
 {
-    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_messages.'` SET paid='.intval($_GET["status"]).' WHERE id='.intval($_GET['lu']));           
-    $message = "Item updated";        
-}
-else if (isset($_GET['ld']) && $_GET['ld'] != '')
-{
-    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE id='.intval($_GET['ld']));       
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_message_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }     
+    $wpdb->query( $wpdb->prepare( 'DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE id=%d', intval($_GET['ld']) ) );       
     $message = "Item deleted";
 }
 else if (isset($_GET['import']) && $_GET['import'] == '1')
 {    
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_message_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }     
     $form = json_decode($this->cleanJSON($this->get_option('form_structure', CP_CFEMAIL_DEFAULT_form_structure)));
     $form = $form[0];    
     
@@ -59,12 +66,11 @@ else if (isset($_GET['import']) && $_GET['import'] == '1')
 }
 
 if ($this->item != 0)
-    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.intval($this->item));
-
+    $myform = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id=%d', intval($this->item) ) );
 
 $current_page = intval($_GET["p"]);
 if (!$current_page) $current_page = 1;
-$records_per_page = 25;                                                                                  
+$records_per_page = 50;                                                                                  
 
 $cond = '';
 if ($_GET["search"] != '') $cond .= " AND (data like '%".esc_sql($_GET["search"])."%' OR posted_data LIKE '%".esc_sql($_GET["search"])."%')";
@@ -77,18 +83,15 @@ $total_pages = ceil(count($events) / $records_per_page);
 
 if ($message) echo "<div id='setting-error-settings_updated' class='updated settings-error'><p><strong>".$message."</strong></p></div>";
 
+$nonce = wp_create_nonce( 'cfte_message_actions_plist' );
 
 ?>
 <script type="text/javascript">
- function cp_updateMessageItem(id,status)
- {    
-    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $this->item; ?>&list=1&status='+status+'&lu='+id+'&r='+Math.random( );   
- } 
  function cp_deleteMessageItem(id)
  {
     if (confirm('Are you sure that you want to delete this item?'))
     {        
-        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo $this->item; ?>&list=1&ld='+id+'&r='+Math.random();
+        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&cal=<?php echo $this->item; ?>&list=1&ld='+id+'&r='+Math.random();
     }
  }
 </script>
@@ -100,7 +103,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
 
 <div id="normal-sortables" class="meta-box-sortables">
  <hr />
- <h3>This message list is from: <?php if ($this->item != 0) echo $myform[0]->form_name; else echo 'All forms'; ?></h3>
+ <h3>This message list is from: <?php if ($this->item != 0) echo strip_tags($myform[0]->form_name); else echo 'All forms'; ?></h3>
 </div>
 
 
@@ -116,7 +119,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
    <?php
     $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items );                                                                     
     foreach ($myrows as $item)  
-         echo '<option value="'.$item->id.'"'.(intval($item->id)==intval($this->item)?" selected":"").'>'.$item->form_name.'</option>'; 
+         echo '<option value="'.$item->id.'"'.(intval($item->id)==intval($this->item)?" selected":"").'>'.strip_tags($item->form_name).'</option>'; 
    ?>
     </select></nobr>
  <nobr><span class="submit"><input type="submit" name="ds" value="Filter" /></span> &nbsp; &nbsp; &nbsp; 
@@ -159,7 +162,7 @@ echo paginate_links(  array(
 	 <?php for ($i=($current_page-1)*$records_per_page; $i<$current_page*$records_per_page; $i++) if (isset($events[$i])) { ?>
 	  <tr class='<?php if (!($i%2)) { ?>alternate <?php } ?>author-self status-draft format-default iedit' valign="top">
 		<td><?php echo substr($events[$i]->time,0,16); ?></td>
-		<td><?php echo $events[$i]->notifyto; ?></td>
+		<td><?php echo htmlentities($events[$i]->notifyto); ?></td>
 		<td><?php  
 		        $data = $events[$i]->data;		        
 		        $posted_data = unserialize($events[$i]->posted_data);		        
@@ -190,7 +193,7 @@ echo paginate_links(  array(
   <h3 class='hndle' style="padding:5px;"><span>Import CSV File</span></h3>
   <div class="inside">
   
-   <form name="CPImportForm" action="admin.php?page=cp_contactformtoemail&cal=<?php echo $this->item; ?>&list=1&import=1" method="post" enctype="multipart/form-data">
+   <form name="CPImportForm" action="admin.php?page=cp_contactformtoemail&rsave=<?php echo $nonce; ?>&cal=<?php echo $this->item; ?>&list=1&import=1" method="post" enctype="multipart/form-data">
    <input type="file" name="importfile" />
    <input type="submit" name="pbuttonimport" value="Import"/>
    <p>Instructions: Comma separated CSV file. One record per line, one field per column. <strong>Don't use a header row with the field names</strong>.</p>
@@ -210,7 +213,7 @@ echo paginate_links(  array(
  function do_dexapp_print()
  {
       w=window.open();
-      w.document.write("<style>.cpnopr{display:none;};table{border:2px solid black;width:100%;}th{border-bottom:2px solid black;text-align:left}td{padding-left:10px;border-bottom:1px solid black;}</style>"+document.getElementById('dex_printable_contents').innerHTML);
+      w.document.write("<style>.cpnopr{display:none;};table{border:2px solid black;width:100%;}th{border-bottom:2px solid black;text-align:left}td{padding-left:15px;border-bottom:1px solid black;}</style>"+document.getElementById('dex_printable_contents').innerHTML);
       w.print();
       w.close();    
  }

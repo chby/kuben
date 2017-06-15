@@ -23,15 +23,17 @@
 .top_aligned .fields .dfield{}
 .left_aligned .fields label{float:left;width:31%}
 .left_aligned .fields .dfield{float:left;width:65%;}
+.left_aligned .cpfieldcaptcha,.left_aligned .pbSubmit{margin-left:31%;}
 .right_aligned .fields label{float:left;width:31%;text-align:right;padding:3px 3px 0px 0px}
 .right_aligned .fields .dfield{float:left;width:65%}
+.right_aligned .cpfieldcaptcha,.right_aligned .pbSubmit{margin-left:31%;}
 
 .cpefb_error{border1:1px solid red;}
 .top_aligned .fields label.cpefb_error,.left_aligned .fields label.cpefb_error,.right_aligned .fields label.cpefb_error{display: block;border:0px;color:#f00;float:none;}
-
+           
 div.message{
-   
-}
+           
+}          
 
 div.cpefb_error{
     background:  #FDF9E5 ;

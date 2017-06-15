@@ -61,6 +61,17 @@ class URE_Base_Lib {
     }
     // end of get_property()
     
+    
+    public function set($property_name, $property_value) {
+        
+        if (!property_exists($this, $property_name)) {
+            syslog(LOG_ERR, 'Lib class does not have such property '. $property_name);
+        }
+        
+        $this->$property_name = $property_value;
+    }
+    // end of get_property()
+    
 
     public function get_main_site() {
         global $current_site;
@@ -72,14 +83,16 @@ class URE_Base_Lib {
 
 
     /**
-     * Returns the array of multisite WP blogs IDs
+     * Returns the array of multi-site WP sites/blogs IDs for the current network
      * @global wpdb $wpdb
      * @return array
      */
     protected function get_blog_ids() {
         global $wpdb;
 
-        $blog_ids = $wpdb->get_col("select blog_id from $wpdb->blogs order by blog_id asc");
+        $network = get_current_site();        
+        $query = "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id={$network->id} ORDER BY blog_id ASC";
+        $blog_ids = $wpdb->get_col($query);
 
         return $blog_ids;
     }
@@ -127,12 +140,12 @@ class URE_Base_Lib {
         $result = 0;
         if ($request_type == 'get') {
             if (isset($_GET[$var_name])) {
-                $result = $_GET[$var_name];
+                $result = filter_var($_GET[$var_name], FILTER_SANITIZE_STRING);
             }
         } else if ($request_type == 'post') {
             if (isset($_POST[$var_name])) {
                 if ($var_type != 'checkbox') {
-                    $result = $_POST[$var_name];
+                    $result = filter_var($_POST[$var_name], FILTER_SANITIZE_STRING);;
                 } else {
                     $result = 1;
                 }
@@ -206,15 +219,15 @@ class URE_Base_Lib {
     // end of flush_options()
 
     /**
-     * Check product versrion and stop execution if product version is not compatible
-     * @param type $must_have_version
-     * @param type $version_to_check
-     * @param type $error_message
-     * @return type
+     * Check product version and stop execution if product version is not compatible
+     * @param string $version1
+     * @param string $version2
+     * @param string $error_message
+     * @return void
      */
-    public static function check_version($must_have_version, $version_to_check, $error_message, $plugin_file_name) {
+    public static function check_version($version1, $version2, $error_message, $plugin_file_name) {
 
-        if (version_compare($must_have_version, $version_to_check, '<')) {
+        if (version_compare($version1, $version2, '<')) {
             if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX )) {
                 require_once ABSPATH . '/wp-admin/includes/plugin.php';
                 deactivate_plugins($plugin_file_name);

@@ -11,7 +11,7 @@ $this->item = intval($_GET["cal"]);
 global $wpdb;
 
 if ($this->item != 0)
-    $myform = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id='.$this->item);                                                                              
+    $myform = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id=%d', $this->item ) );
 
 $date_start = '';
 $date_end = '';
@@ -29,7 +29,7 @@ if ($_GET["dto"] != '')
     $date_end = strip_tags($_GET["dto"]);
 }    
 if (isset($_GET["field"])) $_GET["field"] = strip_tags($_GET["field"]);
-if ($this->item != 0) $cond .= " AND formid=".$this->item;
+if ($this->item != 0) $cond .= " AND formid=".intval($this->item);
 
 $events = $wpdb->get_results( "SELECT ipaddr,time,notifyto,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" );
 
@@ -90,7 +90,6 @@ else
     $form = array();
             
 ?>
-<link href="<?php echo plugins_url('css/style.css', __FILE__); ?>" type="text/css" rel="stylesheet" />   
 
 <div class="wrap">
 <h1><?php echo $this->plugin_name; ?> - Report</h1>
@@ -105,10 +104,10 @@ else
 
 <form action="admin.php" method="get">
  <input type="hidden" name="page" value="<?php echo $this->menu_parameter; ?>" />
- <input type="hidden" name="cal" value="<?php echo $this->item; ?>" />
+ <input type="hidden" name="cal" value="<?php echo esc_attr($this->item); ?>" />
  <input type="hidden" name="report" value="1" />
  <input type="hidden" name="field" value="<?php echo esc_attr(strip_tags($_GET["field"])); ?>" />
- <nobr>Search for: <input type="text" name="search" value="<?php echo esc_attr($_GET["search"]); ?>" /> &nbsp; &nbsp; &nbsp;</nobr> 
+ <nobr>Search for: <input type="text" name="search" value="<?php echo esc_attr(strip_tags($_GET["search"])); ?>" /> &nbsp; &nbsp; &nbsp;</nobr> 
  <nobr>From: <input type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr(strip_tags($_GET["dfrom"])); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
  <nobr>To: <input type="text" id="dto" name="dto" value="<?php echo esc_attr(strip_tags($_GET["dto"])); ?>" /> &nbsp; &nbsp; &nbsp; </nobr>
  <nobr>Item: <select id="cal" name="cal">
@@ -152,9 +151,9 @@ else
 <br />
 <form action="admin.php" name="cfm_formrep" method="get">
  <input type="hidden" name="page" value="<?php echo $this->menu_parameter; ?>" />
- <input type="hidden" name="cal" value="<?php echo $this->item; ?>" />
+ <input type="hidden" name="cal" value="<?php echo esc_attr(strip_tags($this->item)); ?>" />
  <input type="hidden" name="report" value="1" />
- <input type="hidden" name="search" value="<?php echo esc_attr($_GET["search"]); ?>" />
+ <input type="hidden" name="search" value="<?php echo esc_attr(strip_tags($_GET["search"])); ?>" />
  <input type="hidden" id="dfrom" name="dfrom" value="<?php echo esc_attr($_GET["dfrom"]); ?>" />
  <input type="hidden" id="dto" name="dto" value="<?php echo esc_attr($_GET["dto"]); ?>" />    
  <strong>Select field for the report:</strong><br />
@@ -189,6 +188,7 @@ else
   $count = 0;    
   foreach ($arr as $item => $value)
   {
+      $item = htmlentities($item);
       echo $value.' times: '.(strlen($item)>50?substr($item,1,50).'...':substr($item,1));
       echo '<div style="width:'.round($value/$total*$totalsize).'px;border:1px solid black;margin-bottom:3px;font-size:9px;background-color:#'.$color_array[$count].'">'.round($value/$total*100,2).'%</div>';       
       $count++;

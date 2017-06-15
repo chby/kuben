@@ -492,7 +492,7 @@ jQuery(window).on('load', function(){
 			        {
 			            if ($("#cpcaptchalayer"+opt.identifier).html())
 			            {
-			                code += '<div>'+$("#cpcaptchalayer"+opt.identifier).html()+'</div>';
+			                code += '<div class="fields cpfieldcaptcha" id="fieldcaptcha'+opt.identifier+'">'+$("#cpcaptchalayer"+opt.identifier).html()+'</div>';
 			                $("#cpcaptchalayer"+opt.identifier).html("");
 			            }
 			            if ($("#cp_subbtn"+opt.identifier).html())
@@ -519,7 +519,7 @@ jQuery(window).on('load', function(){
 			{
 			    if ($("#cpcaptchalayer"+opt.identifier).html())
 			    {
-			        $("#fieldlist"+opt.identifier+" .pb"+page).append('<div>'+$("#cpcaptchalayer"+opt.identifier).html()+'</div>');
+			        $("#fieldlist"+opt.identifier+" .pb"+page).append('<div class="fields cpfieldcaptcha" id="fieldcaptcha'+opt.identifier+'">'+$("#cpcaptchalayer"+opt.identifier).html()+'</div>');
 			        $("#cpcaptchalayer"+opt.identifier).html("");
 			    }
 			    if ($("#cp_subbtn"+opt.identifier).html())
@@ -785,10 +785,10 @@ jQuery(window).on('load', function(){
 				size:"medium",
 				equalTo:"",
 				display:function(){
-					return '<div class="fields" id="field'+opt.identifier+'-'+this.index+'"><div class="arrow ui-icon ui-icon-play "></div><div class="remove ui-icon ui-icon-trash "></div><label>'+this.title+''+((this.required)?"*":"")+'</label><div class="dfield"><input class="field disabled '+this.size+'" type="text" value="'+htmlEncode(this.predefined)+'"/><span class="uh">'+this.userhelp+'</span></div><div class="clearer"></div></div>';
+					return '<div class="fields" id="field'+opt.identifier+'-'+this.index+'"><div class="arrow ui-icon ui-icon-play "></div><div class="remove ui-icon ui-icon-trash "></div><label>'+this.title+''+((this.required)?"*":"")+'</label><div class="dfield"><input class="field disabled '+this.size+'" type="email" value="'+htmlEncode(this.predefined)+'"/><span class="uh">'+this.userhelp+'</span></div><div class="clearer"></div></div>';
 				},
 				show:function(){
-					return '<div class="fields '+this.csslayout+'" id="field'+opt.identifier+'-'+this.index+'"><label>'+this.title+''+((this.required)?"*":"")+'</label><div class="dfield"><input id="'+this.name+'" name="'+this.name+'" '+((this.equalTo!="")?"equalTo=\"#"+htmlEncode(this.equalTo+opt.identifier)+"\"":"" )+' class="field email '+this.size+((this.required)?" required":"")+'" type="text" value="'+htmlEncode(this.predefined)+'"/><span class="uh">'+this.userhelp+'</span></div><div class="clearer"></div></div>';
+					return '<div class="fields '+this.csslayout+'" id="field'+opt.identifier+'-'+this.index+'"><label>'+this.title+''+((this.required)?"*":"")+'</label><div class="dfield"><input id="'+this.name+'" name="'+this.name+'" '+((this.equalTo!="")?"equalTo=\"#"+htmlEncode(this.equalTo+opt.identifier)+"\"":"" )+' class="field email '+this.size+((this.required)?" required":"")+'" type="email" value="'+htmlEncode(this.predefined)+'"/><span class="uh">'+this.userhelp+'</span></div><div class="clearer"></div></div>';
 				},
                 showSpecialDataInstance: function() {
                     var str = "";

@@ -46,7 +46,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                  fp_from_email VARCHAR(250) DEFAULT '' NOT NULL,
                  fp_destination_emails text,
                  fp_subject VARCHAR(250) DEFAULT '' NOT NULL,
-                 fp_inc_additional_info VARCHAR(10) DEFAULT '' NOT NULL,
+                 fp_inc_additional_info VARCHAR(20) DEFAULT '' NOT NULL,
                  fp_return_page VARCHAR(250) DEFAULT '' NOT NULL,
                  fp_message text,
                  fp_emailformat VARCHAR(20) DEFAULT '' NOT NULL,
@@ -67,9 +67,11 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                  vs_text_digits VARCHAR(250) DEFAULT '' NOT NULL,
                  vs_text_max VARCHAR(250) DEFAULT '' NOT NULL,
                  vs_text_min VARCHAR(250) DEFAULT '' NOT NULL,
+                 vs_text_page VARCHAR(250) DEFAULT '' NOT NULL,
+                 vs_text_of VARCHAR(250) DEFAULT '' NOT NULL,
                  vs_text_submitbtn VARCHAR(250) DEFAULT '' NOT NULL,
-                 vs_text_previousbtn VARCHAR(250) DEFAULT '' NOT NULL,
-                 vs_text_nextbtn VARCHAR(250) DEFAULT '' NOT NULL,                 
+                 vs_text_previousbtn VARCHAR(200) DEFAULT '' NOT NULL,
+                 vs_text_nextbtn VARCHAR(200) DEFAULT '' NOT NULL,                 
 
                  rep_enable VARCHAR(10) DEFAULT '' NOT NULL,
                  rep_days VARCHAR(10) DEFAULT '' NOT NULL,
@@ -131,6 +133,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                                       'vs_text_digits' => $this->get_option('vs_text_digits', CP_CFEMAIL_DEFAULT_vs_text_digits),
                                       'vs_text_max' => $this->get_option('vs_text_max', CP_CFEMAIL_DEFAULT_vs_text_max),
                                       'vs_text_min' => $this->get_option('vs_text_min', CP_CFEMAIL_DEFAULT_vs_text_min),
+                                      'vs_text_page' => $this->get_option('vs_text_page', 'Page'),
+                                      'vs_text_of' => $this->get_option('vs_text_of', 'of'),
                                       'vs_text_submitbtn' => $this->get_option('vs_text_submitbtn', 'Submit'),
                                       'vs_text_previousbtn' => $this->get_option('vs_text_previousbtn', 'Previous'),
                                       'vs_text_nextbtn' => $this->get_option('vs_text_nextbtn', 'Next'),                                      
@@ -185,13 +189,20 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     function insert_public_item() {
         global $wpdb;
         
+        $page_label = $this->get_option('vs_text_page', 'Page');
+        $page_label = ($page_label==''?'Page':$page_label);
+        $of_label = $this->get_option('vs_text_of', 'of');
+        $of_label = ($of_label==''?'of':$of_label);
         $previous_label = $this->get_option('vs_text_previousbtn', 'Previous');
         $previous_label = ($previous_label==''?'Previous':$previous_label);
         $next_label = $this->get_option('vs_text_nextbtn', 'Next');
-        $next_label = ($next_label==''?'Next':$next_label);  
+        $next_label = ($next_label==''?'Next':$next_label);         
         
         if (CP_CFEMAIL_DEFER_SCRIPTS_LOADING)
         {
+            wp_enqueue_style('cfte-stylepublic',  plugins_url('css/stylepublic.css', __FILE__) );
+            wp_enqueue_style('cfte-stylecalendar', plugins_url('css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__));
+        
             wp_deregister_script('query-stringify');
             wp_register_script('query-stringify', plugins_url('/js/jQuery.stringify.js', __FILE__));
 
@@ -203,17 +214,19 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
             wp_localize_script($this->prefix.'_builder_script', $this->prefix.'_fbuilder_config'.('_'.$this->print_counter), array('obj' =>
             '{"pub":true,"identifier":"'.('_'.$this->print_counter).'","messages": {
-            	                	"required": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_is_required', CP_CFEMAIL_DEFAULT_vs_text_is_required),'contact-form-to-email')).'",
-            	                	"email": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_is_email', CP_CFEMAIL_DEFAULT_vs_text_is_email),'contact-form-to-email')).'",
-            	                	"datemmddyyyy": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_datemmddyyyy', CP_CFEMAIL_DEFAULT_vs_text_datemmddyyyy),'contact-form-to-email')).'",
-            	                	"dateddmmyyyy": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_dateddmmyyyy', CP_CFEMAIL_DEFAULT_vs_text_dateddmmyyyy),'contact-form-to-email')).'",
-            	                	"number": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_number', CP_CFEMAIL_DEFAULT_vs_text_number),'contact-form-to-email')).'",
-            	                	"digits": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_digits', CP_CFEMAIL_DEFAULT_vs_text_digits),'contact-form-to-email')).'",
-            	                	"max": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_max', CP_CFEMAIL_DEFAULT_vs_text_max),'contact-form-to-email')).'",
-            	                	"min": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_min', CP_CFEMAIL_DEFAULT_vs_text_min),'contact-form-to-email')).'",
-    	                    	    "previous": "'.str_replace(array('"'),array('\\"'),$previous_label).'",
-    	                    	    "next": "'.str_replace(array('"'),array('\\"'),$next_label).'"
-            	                }}'
+"required": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_is_required', CP_CFEMAIL_DEFAULT_vs_text_is_required),'contact-form-to-email')).'",
+"email": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_is_email', CP_CFEMAIL_DEFAULT_vs_text_is_email),'contact-form-to-email')).'",
+"datemmddyyyy": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_datemmddyyyy', CP_CFEMAIL_DEFAULT_vs_text_datemmddyyyy),'contact-form-to-email')).'",
+"dateddmmyyyy": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_dateddmmyyyy', CP_CFEMAIL_DEFAULT_vs_text_dateddmmyyyy),'contact-form-to-email')).'",
+"number": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_number', CP_CFEMAIL_DEFAULT_vs_text_number),'contact-form-to-email')).'",
+"digits": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_digits', CP_CFEMAIL_DEFAULT_vs_text_digits),'contact-form-to-email')).'",
+"max": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_max', CP_CFEMAIL_DEFAULT_vs_text_max),'contact-form-to-email')).'",
+"min": "'.str_replace(array('"'),array('\\"'),__($this->get_option('vs_text_min', CP_CFEMAIL_DEFAULT_vs_text_min),'contact-form-to-email')).'",
+"previous": "'.str_replace(array('"'),array('\\"'),$previous_label).'",
+"next": "'.str_replace(array('"'),array('\\"'),$next_label).'",
+"page": "'.str_replace(array('"'),array('\\"'),$page_label).'",
+"of": "'.str_replace(array('"'),array('\\"'),$of_label).'"
+}}'
             ));
         }
         else
@@ -254,9 +267,12 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             $prefix_ui = '';
             if (@file_exists(dirname( __FILE__ ).'/../../../wp-includes/js/jquery/ui/jquery.ui.core.min.js'))
                 $prefix_ui = 'jquery.ui.';             
-            // This code won't be used in most cases. This code is for preventing problems in wrong WP themes and conflicts with third party plugins.
+            // This code won't be used in most cases. This code is for preventing problems in wrong WP themes and conflicts with third party plugins. 
+            // It can be manually activated by the user if needed from the troubleshoot settings area of the plugin
             ?>
                  <?php $plugin_url = plugins_url('', __FILE__); ?>
+                 <link href="<?php echo plugins_url('css/stylepublic.css', __FILE__); ?>" type="text/css" rel="stylesheet" />
+                 <link href="<?php echo plugins_url('css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__); ?>" type="text/css" rel="stylesheet" />                 
                  <script type='text/javascript' src='<?php echo $plugin_url.'/../../../wp-includes/js/jquery/jquery.js'; ?>'></script>
                  <script type='text/javascript' src='<?php echo $plugin_url.'/../../../wp-includes/js/jquery/ui/'.$prefix_ui.'core.min.js'; ?>'></script>
                  <script type='text/javascript' src='<?php echo $plugin_url.'/../../../wp-includes/js/jquery/ui/'.$prefix_ui.'datepicker.min.js'; ?>'></script>
@@ -284,8 +300,10 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     	array_unshift($links, $customAdjustments_link);
         $settings_link = '<a href="admin.php?page='.$this->menu_parameter.'">'.__('Settings','contact-form-to-email').'</a>';
     	array_unshift($links, $settings_link);
-    	$help_link = '<a href="'.$this->plugin_URL.'">'.__('Help','contact-form-to-email').'</a>';
-    	array_unshift($links, $help_link);
+    	$help_link = '<a href="http://form2email.dwbooster.com/support">'.__('Documentation','contact-form-to-email').'</a>';
+    	array_unshift($links, $help_link);    	
+    	$s_link = '<a href="https://wordpress.org/support/plugin/contact-form-to-email#new-post">'.__('Support','contact-form-to-email').'</a>';
+    	array_unshift($links, $s_link);    	
     	return $links;
     }
 
@@ -342,6 +360,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             wp_deregister_script('query-stringify');
             wp_register_script('query-stringify', plugins_url('/js/jQuery.stringify.js', __FILE__));
             wp_enqueue_script( $this->prefix.'_builder_script', plugins_url('/js/fbuilderf.jquery.js', __FILE__),array("jquery","jquery-ui-core","jquery-ui-sortable","jquery-ui-tabs","jquery-ui-droppable","jquery-ui-button","query-stringify","jquery-ui-datepicker") );
+            wp_enqueue_style('cfte-adminstyles', plugins_url('css/style.css', __FILE__) );
+            wp_enqueue_style('cfte-admincalendarstyles', plugins_url('css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__) );
             wp_enqueue_style('jquery-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
         }
         if( 'post.php' != $hook  && 'post-new.php' != $hook )
@@ -472,15 +492,15 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $to = $this->get_option('cu_user_email_field', CP_CFEMAIL_DEFAULT_cu_user_email_field);
         $rows_affected = $wpdb->insert( $wpdb->prefix.$this->table_messages, array( 'formid' => $this->item,
                                                                                     'time' => current_time('mysql'),
-                                                                                    'ipaddr' => $_SERVER['REMOTE_ADDR'],
+                                                                                    'ipaddr' => $this->getRealUserIP(),
                                                                                     'notifyto' => (@$_POST[$to.$sequence]?$_POST[$to.$sequence]:''),
                                                                                     'posted_data' => serialize($params),
                                                                                     'data' =>$buffer_A
                                                                                    ) );
         if (!$rows_affected)
         {
-            echo 'Error saving data! Please try again.';
-            echo '<br /><br />Error debug information: '.mysql_error();
+            echo 'Error saving data! Please try again.';            
+            echo '<br /><br />If the error persists  please be sure you are using the latest version and in that case contact support service at http://form2email.dwbooster.com/contact-us?debug=db';
             exit;
         }
 
@@ -498,7 +518,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $filename = $uploadfiles['name'];
         $filetype = wp_check_filetype( basename( $filename ), null );
 
-        if ( in_array ($filetype["ext"],array("php","asp","aspx","cgi","pl","perl","exe","cmd")) )
+        if ( in_array ($filetype["ext"],array("php","asp","aspx","cgi","pl","perl","exe","cmd","js","msi")) )
             return false;
         else
             return true;
@@ -510,9 +530,9 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
         global $wpdb;
 
-        $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE id=".$itemnumber );
-
-        $mycalendarrows = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix.$this->table_items.' WHERE `id`='.$myrows[0]->formid);
+        $myrows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE id=%d", $itemnumber ) );
+        
+        $mycalendarrows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM '.$wpdb->prefix.$this->table_items.' WHERE `id`=%d', $myrows[0]->formid ) );
 
         $this->item = $myrows[0]->formid;
 
@@ -642,63 +662,68 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $this->add_field_verify($wpdb->prefix.$this->table_items, "rep_subject", "text");
         $this->add_field_verify($wpdb->prefix.$this->table_items, "rep_emailformat", "VARCHAR(10)");
         $this->add_field_verify($wpdb->prefix.$this->table_items, "rep_message", "text");
+        $this->add_field_verify($wpdb->prefix.$this->table_items,'vs_text_page'," varchar(250) NOT NULL default ''");
+        $this->add_field_verify($wpdb->prefix.$this->table_items,'vs_text_of'," varchar(250) NOT NULL default ''");
         $this->add_field_verify($wpdb->prefix.$this->table_items,'vs_text_submitbtn'," varchar(250) NOT NULL default ''");
         $this->add_field_verify($wpdb->prefix.$this->table_items,'vs_text_previousbtn'," varchar(250) NOT NULL default ''");
         $this->add_field_verify($wpdb->prefix.$this->table_items,'vs_text_nextbtn'," varchar(250) NOT NULL default ''");         
 
-        $data = array(
-                      'form_structure' => $_POST['form_structure'],
-
-                      'fp_from_email' => $_POST['fp_from_email'],
-                      'fp_destination_emails' => $_POST['fp_destination_emails'],
-                      'fp_subject' => $_POST['fp_subject'],
-                      'fp_inc_additional_info' => $_POST['fp_inc_additional_info'],
-                      'fp_return_page' => $_POST['fp_return_page'],
-                      'fp_message' => $_POST['fp_message'],
-                      'fp_emailformat' => $_POST['fp_emailformat'],
-
-                      'cu_enable_copy_to_user' => $_POST['cu_enable_copy_to_user'],
-                      'cu_user_email_field' => $_POST['cu_user_email_field'],
-                      'cu_subject' => $_POST['cu_subject'],
-                      'cu_message' => $_POST['cu_message'],
-                      'cu_emailformat' => $_POST['cu_emailformat'],
-                      'fp_emailfrommethod' => $_POST['fp_emailfrommethod'],
-
-                      //'vs_use_validation' => $_POST['vs_use_validation'],
-                      'vs_text_is_required' => $_POST['vs_text_is_required'],
-                      'vs_text_is_email' => $_POST['vs_text_is_email'],
-                      'vs_text_datemmddyyyy' => $_POST['vs_text_datemmddyyyy'],
-                      'vs_text_dateddmmyyyy' => $_POST['vs_text_dateddmmyyyy'],
-                      'vs_text_number' => $_POST['vs_text_number'],
-                      'vs_text_digits' => $_POST['vs_text_digits'],
-                      'vs_text_max' => $_POST['vs_text_max'],
-                      'vs_text_min' => $_POST['vs_text_min'],
-                      'vs_text_submitbtn' => $_POST['vs_text_submitbtn'],
-                      'vs_text_previousbtn' => $_POST['vs_text_previousbtn'],
-                      'vs_text_nextbtn' => $_POST['vs_text_nextbtn'],
-
-                      'rep_enable' => $_POST['rep_enable'],
-                      'rep_days' => $_POST['rep_days'],
-                      'rep_hour' => $_POST['rep_hour'],
-                      'rep_emails' => $_POST['rep_emails'],
-                      'rep_subject' => $_POST['rep_subject'],
-                      'rep_emailformat' => $_POST['rep_emailformat'],
-                      'rep_message' => $_POST['rep_message'],
-
-                      'cv_enable_captcha' => $_POST['cv_enable_captcha'],
-                      'cv_width' => $_POST['cv_width'],
-                      'cv_height' => $_POST['cv_height'],
-                      'cv_chars' => $_POST['cv_chars'],
-                      'cv_font' => $_POST['cv_font'],
-                      'cv_min_font_size' => $_POST['cv_min_font_size'],
-                      'cv_max_font_size' => $_POST['cv_max_font_size'],
-                      'cv_noise' => $_POST['cv_noise'],
-                      'cv_noise_length' => $_POST['cv_noise_length'],
-                      'cv_background' => $_POST['cv_background'],
-                      'cv_border' => $_POST['cv_border'],
-                      'cv_text_enter_valid_captcha' => $_POST['cv_text_enter_valid_captcha']
-    	);
-        $wpdb->update ( $wpdb->prefix.$this->table_items, $data, array( 'id' => $this->item ));
+        $wpdb->update ( $wpdb->prefix.$this->table_items, 
+                        array(
+                              'form_structure' => $_POST['form_structure'],
+                              
+                              'fp_from_email' => $_POST['fp_from_email'],
+                              'fp_destination_emails' => $_POST['fp_destination_emails'],
+                              'fp_subject' => $_POST['fp_subject'],
+                              'fp_inc_additional_info' => $_POST['fp_inc_additional_info'],
+                              'fp_return_page' => $_POST['fp_return_page'],
+                              'fp_message' => $_POST['fp_message'],
+                              'fp_emailformat' => $_POST['fp_emailformat'],
+                              
+                              'cu_enable_copy_to_user' => $_POST['cu_enable_copy_to_user'],
+                              'cu_user_email_field' => $_POST['cu_user_email_field'],
+                              'cu_subject' => $_POST['cu_subject'],
+                              'cu_message' => $_POST['cu_message'],
+                              'cu_emailformat' => $_POST['cu_emailformat'],
+                              'fp_emailfrommethod' => $_POST['fp_emailfrommethod'],
+                              
+                              //'vs_use_validation' => $_POST['vs_use_validation'],
+                              'vs_text_is_required' => $_POST['vs_text_is_required'],
+                              'vs_text_is_email' => $_POST['vs_text_is_email'],
+                              'vs_text_datemmddyyyy' => $_POST['vs_text_datemmddyyyy'],
+                              'vs_text_dateddmmyyyy' => $_POST['vs_text_dateddmmyyyy'],
+                              'vs_text_number' => $_POST['vs_text_number'],
+                              'vs_text_digits' => $_POST['vs_text_digits'],
+                              'vs_text_max' => $_POST['vs_text_max'],
+                              'vs_text_min' => $_POST['vs_text_min'],
+                              'vs_text_page' => $_POST['vs_text_page'],
+                              'vs_text_of' => $_POST['vs_text_of'],
+                              'vs_text_submitbtn' => $_POST['vs_text_submitbtn'],
+                              'vs_text_previousbtn' => $_POST['vs_text_previousbtn'],
+                              'vs_text_nextbtn' => $_POST['vs_text_nextbtn'],
+                              
+                              'rep_enable' => $_POST['rep_enable'],
+                              'rep_days' => $_POST['rep_days'],
+                              'rep_hour' => $_POST['rep_hour'],
+                              'rep_emails' => $_POST['rep_emails'],
+                              'rep_subject' => $_POST['rep_subject'],
+                              'rep_emailformat' => $_POST['rep_emailformat'],
+                              'rep_message' => $_POST['rep_message'],
+                              
+                              'cv_enable_captcha' => $_POST['cv_enable_captcha'],
+                              'cv_width' => $_POST['cv_width'],
+                              'cv_height' => $_POST['cv_height'],
+                              'cv_chars' => $_POST['cv_chars'],
+                              'cv_font' => $_POST['cv_font'],
+                              'cv_min_font_size' => $_POST['cv_min_font_size'],
+                              'cv_max_font_size' => $_POST['cv_max_font_size'],
+                              'cv_noise' => $_POST['cv_noise'],
+                              'cv_noise_length' => $_POST['cv_noise_length'],
+                              'cv_background' => $_POST['cv_background'],
+                              'cv_border' => $_POST['cv_border'],
+                              'cv_text_enter_valid_captcha' => $_POST['cv_text_enter_valid_captcha']
+    	                     )
+                        , array( 'id' => $this->item ));
     }
 
 
@@ -717,6 +742,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
 
     function generateSafeFileName($filename) {
+        $filename = sanitize_file_name($filename);
         $filename = strtolower(strip_tags($filename));
         $filename = str_replace(";","_",$filename);
         $filename = str_replace("#","_",$filename);
@@ -755,21 +781,21 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         if ($this->get_param("search")) $cond .= " AND (data like '%".esc_sql($this->get_param("search"))."%' OR posted_data LIKE '%".esc_sql($this->get_param("search"))."%')";
         if ($this->get_param("dfrom")) $cond .= " AND (`time` >= '".esc_sql($this->get_param("dfrom"))."')";
         if ($this->get_param("dto")) $cond .= " AND (`time` <= '".esc_sql($this->get_param("dto"))." 23:59:59')";
-        if ($this->item != 0) $cond .= " AND formid=".$this->item;
+        if ($this->item != 0) $cond .= " AND formid=".intval($this->item);
 
         $events = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" );
 
         if ($this->include_user_data_csv)
-            $fields = array("Form ID", "Time", "IP Address", "email");
+            $fields = array("ID","Form ID", "Time", "IP Address", "email");
         else
-            $fields = array("Form", "email");
+            $fields = array("ID","Form", "email");
         $values = array();
         foreach ($events as $item)
         {
             if ($this->include_user_data_csv)
-                $value = array($item->formid, $item->time, $item->ipaddr, $item->notifyto);
+                $value = array($item->id,$item->formid, $item->time, $item->ipaddr, $item->notifyto);
             else
-                $value = array($this->get_option('form_name',''), $item->notifyto);
+                $value = array($item->id,$this->get_option('form_name',''), $item->notifyto);
             if ($item->posted_data)
                 $data = unserialize($item->posted_data);
             else
@@ -790,7 +816,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             $values[] = $value;
         }
 
-        $filename = $this->generateSafeFileName(strtolower($this->get_option('form_name','export'))).'_'.date("m_d_y");
+        $filename = $this->generateSafeFileName($this->get_option('form_name','export')).'_'.date("m_d_y");
 
         header("Content-type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".$filename.".csv");
@@ -855,7 +881,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $this->item = intval($formid);
         
         $last_sent_id = get_option('cp_cfte_last_sent_id_'.$formid, '0');
-        $events = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE formid=".$formid." AND id>".$last_sent_id." ORDER BY id ASC");
+        $events = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE formid=%d AND id>%d ORDER BY id ASC", $formid, $last_sent_id) );
 
         if ($wpdb->num_rows <= 0) // if no rows, return empty
             return '';
@@ -950,7 +976,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                         if ($csv != '')
                         {
                             $text = "- ".substr_count($csv,",\n\"").' submissions from '.$form->form_name."\n";
-                            $filename = $this->generateSafeFileName(strtolower($form->form_name)).'_'.date("m_d_y");
+                            $filename = $this->generateSafeFileName($form->form_name).'_'.date("m_d_y");
                             $filename = WP_CONTENT_DIR . '/uploads/'.$filename .'.csv';
                             $handle = fopen($filename, 'w');
                             fwrite($handle,$csv);
@@ -981,7 +1007,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                     $csv = $this->get_records_csv($formid, $form->form_name);
                     if ($csv != '')
                     {
-                        $filename = $this->generateSafeFileName(strtolower($form->form_name)).'_'.date("m_d_y");
+                        $filename = $this->generateSafeFileName($form->form_name).'_'.date("m_d_y");
                         $filename = WP_CONTENT_DIR . '/uploads/'.$filename .'.csv';
                         $handle = fopen($filename, 'w');
                         fwrite($handle,$csv);

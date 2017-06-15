@@ -10,6 +10,13 @@ global $wpdb;
 $message = "";
 if (isset($_GET['a']) && $_GET['a'] == '1')
 {
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_update_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }    
+    
     define('CP_CFEMAIL_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
     define('CP_CFEMAIL_DEFAULT_fp_destination_emails', CP_CFEMAIL_DEFAULT_fp_from_email);
     
@@ -60,17 +67,35 @@ if (isset($_GET['a']) && $_GET['a'] == '1')
     $message = "Item added";
 } 
 else if (isset($_GET['u']) && $_GET['u'] != '')
-{
-    $wpdb->query('UPDATE `'.$wpdb->prefix.$this->table_items.'` SET form_name="'.esc_sql($_GET["name"]).'" WHERE id='.intval($_GET['u']));
+{    
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_update_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }       
+    $wpdb->query( $wpdb->prepare( 'UPDATE `'.$wpdb->prefix.$this->table_items.'` SET form_name=%s WHERE id=%d', $_GET["name"], $_GET['u'] ) );
     $message = "Item updated";        
 }
 else if (isset($_GET['d']) && $_GET['d'] != '')
-{
-    $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_items.'` WHERE id='.intval($_GET['d']));       
+{    
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_update_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }   
+    $wpdb->query( $wpdb->prepare( 'DELETE FROM `'.$wpdb->prefix.$this->table_items.'` WHERE id=%d', intval($_GET['d']) ) );
     $message = "Item deleted";
 } else if (isset($_GET['c']) && $_GET['c'] != '')
-{
-    $myrows = $wpdb->get_row( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".intval($_GET['c']), ARRAY_A);    
+{    
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_update_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }       
+    $myrows = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=%d", $_GET['c'] ), ARRAY_A);    
     unset($myrows["id"]);
     $myrows["form_name"] = 'Cloned: '.$myrows["form_name"];
     $wpdb->insert( $wpdb->prefix.$this->table_items, $myrows);
@@ -78,6 +103,12 @@ else if (isset($_GET['d']) && $_GET['d'] != '')
 }
 else if (isset($_GET['ac']) && $_GET['ac'] == 'st')
 {   
+    $verify_nonce = wp_verify_nonce( $_GET['rsave'], 'cfte_update_actions_plist');
+    if (!$verify_nonce)
+    {
+        echo 'Error: Form cannot be authenticated (nonce failed). Please contact our <a href="form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+        return;
+    }       
     update_option( 'CP_CFTE_LOAD_SCRIPTS', ($_GET["scr"]=="1"?"0":"1") );   
     if ($_GET["chs"] != '')
     {
@@ -115,6 +146,8 @@ else if (isset($_POST["cp_cfte_rep_enable"]))
 
 if ($message) echo "<div id='setting-error-settings_updated' class='updated settings-error'><p><strong>".$message."</strong></p></div>";
 
+$nonce = wp_create_nonce( 'cfte_update_actions_plist' );
+
 ?>
 <div class="wrap">
 <h1><?php echo $this->plugin_name; ?></h1>
@@ -123,40 +156,40 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
  function cp_addItem()
  {
     var calname = document.getElementById("cp_itemname").value;
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&a=1&r='+Math.random()+'&name='+encodeURIComponent(calname);       
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&a=1&r='+Math.random()+'&name='+encodeURIComponent(calname);       
  }
  
  function cp_updateItem(id)
  {
     var calname = document.getElementById("calname_"+id).value;    
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&u='+id+'&r='+Math.random()+'&name='+encodeURIComponent(calname);    
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&u='+id+'&r='+Math.random()+'&name='+encodeURIComponent(calname);    
  }
  
  function cp_cloneItem(id)
  {
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&c='+id+'&r='+Math.random();  
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&c='+id+'&r='+Math.random();  
  } 
  
  function cp_manageSettings(id)
  {
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&r='+Math.random();
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&r='+Math.random();
  }
  
  function cp_viewMessages(id)
  {
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&list=1&r='+Math.random();
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&list=1&r='+Math.random();
  } 
  
  function cp_viewReport(id)
  {
-    document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&report=1&r='+Math.random();
+    document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal='+id+'&report=1&r='+Math.random();
  } 
  
  function cp_deleteItem(id)
  {
     if (confirm('Are you sure that you want to delete this item?'))
     {        
-        document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&d='+id+'&r='+Math.random();
+        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&d='+id+'&r='+Math.random();
     }
  }
  
@@ -166,7 +199,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
     {        
         var scr = document.getElementById("ccscriptload").value;    
         var chs = document.getElementById("cccharsets").value;    
-        document.location = 'options-general.php?page=<?php echo $this->menu_parameter; ?>&ac=st&scr='+scr+'&chs='+chs+'&r='+Math.random();
+        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&rsave=<?php echo $nonce; ?>&ac=st&scr='+scr+'&chs='+chs+'&r='+Math.random();
     }    
  }
  
@@ -221,7 +254,7 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
   <h3 class='hndle' style="padding:5px;"><span>New Form</span></h3>
   <div class="inside"> 
    
-    <form name="additem">
+    <form name="additem" onsubmit="cp_addItem();return false;">
       Item Name:<br />
       <input type="text" name="cp_itemname" id="cp_itemname"  value="" /> <input type="button" onclick="cp_addItem();" name="gobtn" value="Add" />
       <br /><br />      
@@ -326,6 +359,6 @@ if ($message) echo "<div id='setting-error-settings_updated' class='updated sett
 </div> 
 
 
-[<a href="http://form2email.dwbooster.com/contact-us?ref=dashboard" target="_blank">Request Custom Modifications</a>] | [<a href="<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
+[<a href="https://wordpress.org/support/plugin/contact-form-to-email#new-post" target="_blank">Support</a>] | [<a href="<?php echo $this->plugin_URL; ?>" target="_blank">Help</a>]
 </form>
 </div>

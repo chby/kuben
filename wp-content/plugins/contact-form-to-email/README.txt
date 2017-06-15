@@ -1,9 +1,9 @@
 === Contact Form Email ===
 Contributors: codepeople
 Donate link: http://form2email.dwbooster.com/download
-Tags: contact form,contact,email,contact form database,form,contact form excel,feedback,captcha,contact form plugin,form to email,form to database,contact form builder,form to csv,wordpress contact form,csv,contact form reports,form to excel,contact form csv,drag and drop contact form,excel
+Tags: contact form,contact,email,contact form database,form,contact form excel,form to email,form to database,contact form builder,form to csv,form to excel,contact form csv
 Requires at least: 3.0.5
-Tested up to: 4.7
+Tested up to: 4.8
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -154,7 +154,7 @@ The following translations are already included in the plugin:
 
 = Contact Form to Email Updates =
 
-New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 500,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
+New features has been published in the current Contact Form to Email version 1.2.7 based on the feedback received and we would like to thank you all the people that have supported the development, provided feedback and feature requests. The plugin is currently over the 630,000 downloads/installations and a new set of updates is already being prepared, any feature requests will be welcome. Thank you!
 
 = New: Form Builder =
 
@@ -432,6 +432,311 @@ When you click a field already added into the contact form builder area, you can
 
 == Changelog ==
 
+= 1.1.97 =
+* Removed used of deprecated mysql_ functions
+
+= 1.1.96 =
+* Tested and compatible with WordPress 4.8
+
+= 1.1.95 =
+* Fixed bug that caused error while reusing resources
+
+= 1.1.94 =
+* Fixes script issue in previous update
+
+= 1.1.93 =
+* Added new settings and translation fields
+
+= 1.1.92 =                                                 
+* Improved IP address detection to get real user IP address
+
+= 1.1.91 =
+* Fixed bug in review box
+
+= 1.1.90 =
+* Major code update, multiple code optimization and security improvements
+
+= 1.1.89 =
+* Better query sanitization
+* Optional feedback option added
+
+= 1.1.88 =
+* Fixed XSS vulneravility
+
+= 1.1.87 =
+* Fix to the captcha align in the form builder
+
+= 1.1.86 =
+* Form builder update to support email type for mobile devices
+
+= 1.1.85 =
+* Field validations in dashboard to prevent common email config issues
+
+= 1.1.84 =
+* Minified script to improve form speed
+
+= 1.1.83 =
+* Included submission ID in CSV file
+
+= 1.1.82 =
+* Compatible with WP 4.7.3
+
+= 1.1.81 =
+* Help address update
+
+= 1.1.80 =
+* Security improvement
+
+= 1.1.79 =
+* Visualization update
+
+= 1.1.78 =
+* Documentation updates
+
+= 1.1.77 =
+* Bug fixed in add contact form feature
+
+= 1.1.76 =
+* Validation updates
+
+= 1.1.75 =
+* Fixed broken admin button
+
+= 1.1.74 =
+* Admin intf update
+
+= 1.1.73 =
+* Security improvement
+
+= 1.1.72 =
+* DB improvements
+
+= 1.1.71 =
+* Fixed typo
+
+= 1.1.70 =
+* Fixed intf. bug
+
+= 1.1.69 =
+* DB update
+
+= 1.1.68 =
+* Instructions update
+
+= 1.1.67 =
+* Fixes to filename generation
+
+= 1.1.66 =
+* Compatible with WP 4.7
+
+= 1.1.65 =
+* Database fix
+
+= 1.1.64 =
+* Doc link updated
+
+= 1.1.63 =
+* Database improvements
+
+= 1.1.62 =
+* Fixed database error on IP v6 networks
+
+= 1.1.61 =
+* Improved support tracking
+
+= 1.1.60 =
+* Code optimizations
+
+= 1.1.59 =
+* French language corrections
+
+= 1.1.58 =
+* Fix to visualization bug in Firefox
+
+= 1.1.57 =
+* Interface update
+
+= 1.1.56 =
+* Roll back to incorrect update
+
+= 1.1.55 =
+* More fixes for magic quotes issue
+
+= 1.1.54 =
+* Fixed magic quotes issue
+
+= 1.1.53 =
+* IP addr database update
+
+= 1.1.52 =
+* Modified processing of posted data
+
+= 1.1.51 =
+* New customization form
+
+= 1.1.50 =
+* Fixed XSS issue. Thank you to Netsparker Ltd (netsparker.com) for the notification.
+
+= 1.1.49 =
+* Compatible with WP 4.6
+
+= 1.1.48 =
+*  Fixed XSS issue (Thank you to Burak Kelebek for the report)
+
+= 1.1.47 =
+*  Modified admin addr
+
+= 1.1.46 =         
+* Fix on email tags
+
+= 1.1.45 =
+* Auto-formatting for from email
+
+= 1.1.44 =
+* Captcha params update
+
+= 1.1.43 =
+* Mail notice removed
+
+= 1.1.42 =
+* IP address not included as default to avoid anti-spam issues
+
+= 1.1.41 =
+* "From" email address corrected
+
+= 1.1.40 =
+* New documentation
+
+= 1.1.39 =
+* Removed old versions of Contact Form to Email
+
+= 1.1.38 =
+* Removed unneeded tag from public from
+
+= 1.1.37 =
+* Using plugins_loaded instead init
+
+= 1.1.35 =
+* Fixed bug in throubleshoot area
+
+= 1.1.34 =
+* jQuery deprecated functions replaced
+
+= 1.1.33 =
+* Slashes escape fix
+
+= 1.1.32 =
+* Compatible with WP 4.5
+
+= 1.1.31 =
+* New filter for file uploads
+
+= 1.1.30 =
+* Correction to support address
+
+= 1.1.29 =
+* Added nonces and security improvements
+
+= 1.1.28 =
+* Added demo pages
+
+= 1.1.27 =
+* New website & documentation links
+
+= 1.1.26 =
+* Updated API URLs
+
+= 1.1.25 =
+* Shortcode paramters sanitization
+
+= 1.1.24 =
+* Fixed PHP session issues
+
+= 1.1.23 =
+* Fixed typos in French translations
+
+= 1.1.22 =
+* Message list updates
+
+= 1.1.21 =
+* Improved captcha security
+
+= 1.1.20 =
+* Fixed CSS errors and the submit button style in the new WP themes
+
+= 1.1.19 =
+* Fixed validation tags
+
+= 1.1.18 =
+* Removed old styles
+
+= 1.1.17 =
+* Optimization. Removed code from old/unused behaviors
+
+= 1.1.16 =
+* Fixed captcha issues
+
+= 1.1.15 =
+* Fixed insert query
+
+= 1.1.14 =
+* Tested and compatible with WordPress 4.4
+
+= 1.1.13 =
+* Form validation is now activated from the form builder
+
+= 1.1.12 =
+* Updates to admin interface
+
+= 1.1.11 =
+* Interface modifications
+
+= 1.1.10 =
+* Support new charsets
+
+= 1.1.9 =
+* Default settings updated
+
+= 1.1.8 =
+* Fixed CSV sample format
+* Updated support links
+
+= 1.1.7 =
+* Update to the h2-h1 tags in the admin interface
+* Fixed bug with the tabs
+* Fixed initialization bug in reports
+* Fixed typo in dutch language
+* Removed unneeded data from the post process
+
+= 1.1.6 =
+* Compatible with the latest WordPress 4.2.3
+* Update to messages list.
+* Better code for captcha image generation.
+* Fixed conflict with zLib library
+* Update to the captcha generation to add content-length header
+
+= 1.1.5 =
+* Removed use of esc_sql for numeric values
+* Fixed XSS vulnerability
+* Fixed bug in translation functions.
+
+= 1.1.4 =
+* Compatible with the WordPress 4.2.2 version
+
+= 1.1.3 =
+* Sanitized parameters used in SQL queries.
+* Support for large forms.
+* Improved translations.
+* Compatible with the latest WordPress 4.2.x version
+
+= 1.1.2 =
+* Compatible with the latest WP versions
+* Improved translation code, compatible with the latest WP versions
+* New translations
+* Auto-detection and auto-solution for captcha image issues in servers with problem with the PHP sessions configuration
+* Fixed warning that appeared with PHP safe mode restrictions 
+* Sanitized GET parameters used in queries
+
 = 1.01 =
 * Compatible with the latest WP versions
 * New automatic CSV report options
@@ -443,224 +748,8 @@ When you click a field already added into the contact form builder area, you can
 * Fixed bug with back slashes on submissions
 
 
-= 1.1.2 =
-* Compatible with the latest WP versions
-* Improved translation code, compatible with the latest WP versions
-* New translations
-* Auto-detection and auto-solution for captcha image issues in servers with problem with the PHP sessions configuration
-* Fixed warning that appeared with PHP safe mode restrictions 
-* Sanitized GET parameters used in queries
-
-
-= 1.1.3 =
-* Sanitized parameters used in SQL queries.
-* Support for large forms.
-* Improved translations.
-* Compatible with the latest WordPress 4.2.x version
-
-= 1.1.4 =
-* Compatible with the WordPress 4.2.2 version
-
-= 1.1.5 =
-* Removed use of esc_sql for numeric values
-* Fixed XSS vulnerability
-* Fixed bug in translation functions.
-
-= 1.1.6 =
-* Compatible with the latest WordPress 4.2.3
-* Update to messages list.
-* Better code for captcha image generation.
-* Fixed conflict with zLib library
-* Update to the captcha generation to add content-length header
-
-= 1.1.7 =
-* Update to the h2-h1 tags in the admin interface
-* Fixed bug with the tabs
-* Fixed initialization bug in reports
-* Fixed typo in dutch language
-* Removed unneeded data from the post process
-
-= 1.1.8 =
-* Fixed CSV sample format
-* Updated support links
-
-= 1.1.9 =
-* Default settings updated
-
-= 1.1.10 =
-* Support new charsets
-
-= 1.1.11 =
-* Interface modifications
-
-= 1.1.12 =
-* Updates to admin interface
-
-= 1.1.13 =
-* Form validation is now activated from the form builder
-
-= 1.1.14 =
-* Tested and compatible with WordPress 4.4
-
-= 1.1.15 =
-* Fixed insert query
-
-= 1.1.16 =
-* Fixed captcha issues
-
-= 1.1.17 =
-* Optimization. Removed code from old/unused behaviors
-
-= 1.1.18 =
-* Removed old styles
-
-= 1.1.19 =
-* Fixed validation tags
-
-= 1.1.20 =
-* Fixed CSS errors and the submit button style in the new WP themes
-
-= 1.1.21 =
-* Improved captcha security
-
-= 1.1.22 =
-* Message list updates
-
-= 1.1.23 =
-* Fixed typos in French translations
-
-= 1.1.24 =
-* Fixed PHP session issues
-
-= 1.1.25 =
-* Shortcode paramters sanitization
-
-= 1.1.26 =
-* Updated API URLs
-
-= 1.1.27 =
-* New website & documentation links
-
-= 1.1.28 =
-* Added demo pages
-
-= 1.1.29 =
-* Added nonces and security improvements
-
-= 1.1.30 =
-* Correction to support address
-
-= 1.1.31 =
-* New filter for file uploads
-
-= 1.1.32 =
-* Compatible with WP 4.5
-
-= 1.1.33 =
-* Slashes escape fix
-
-= 1.1.34 =
-* jQuery deprecated functions replaced
-
-= 1.1.35 =
-* Fixed bug in throubleshoot area
-
-= 1.1.37 =
-* Using plugins_loaded instead init
-
-= 1.1.38 =
-* Removed unneeded tag from public from
-
-= 1.1.39 =
-* Removed old versions of Contact Form to Email
-
-= 1.1.40 =
-* New documentation
-
-= 1.1.41 =
-* "From" email address corrected
-
-= 1.1.42 =
-* IP address not included as default to avoid anti-spam issues
-
-= 1.1.43 =
-* Mail notice removed
-
-= 1.1.44 =
-* Captcha params update
-
-= 1.1.45 =
-* Auto-formatting for from email
-
-= 1.1.46 =         
-* Fix on email tags
-
-= 1.1.47 =
-*  Modified admin addr
-
-= 1.1.48 =
-*  Fixed XSS issue (Thank you to Burak Kelebek for the report)
-
-= 1.1.49 =
-* Compatible with WP 4.6
-
-= 1.1.50 =
-* Fixed XSS issue. Thank you to Netsparker Ltd (netsparker.com) for the notification.
-
-= 1.1.51 =
-* New customization form
-
-= 1.1.52 =
-* Modified processing of posted data
-
-= 1.1.53 =
-* IP addr database update
-
-= 1.1.54 =
-* Fixed magic quotes issue
-
-= 1.1.55 =
-* More fixes for magic quotes issue
-
-= 1.1.56 =
-* Roll back to incorrect update
-
-= 1.1.57 =
-* Interface update
-
-= 1.1.58 =
-* Fix to visualization bug in Firefox
-
-= 1.1.59 =
-* French language corrections
-
-= 1.1.60 =
-* Code optimizations
-
-= 1.1.61 =
-* Improved support tracking
-
-= 1.1.62 =
-* Fixed database error on IP v6 networks
-
-= 1.1.63 =
-* Database improvements
-
-= 1.1.64 =
-* Doc link updated
-
-= 1.1.65 =
-* Database fix
-
-= 1.1.66 =
-* Compatible with WP 4.7
-
-= 1.1.67 =
-* Fixes to filename generation
-
 == Upgrade Notice ==
 
-= 1.1.67 =
-* Fixes to filename generation
+= 1.1.97 =
+* Removed used of deprecated mysql_ functions
 
-Important note: If you are using a commercial version don't update via the WP dashboard but using your personal update link. Contact us if you need further information: http://form2email.dwbooster.com/contact-us
