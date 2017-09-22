@@ -5,7 +5,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     private $menu_parameter = 'cp_contactformtoemail';
     private $prefix = 'cp_contactformtoemail';
     private $plugin_name = 'Contact Form to Email';
-    private $plugin_URL = 'http://form2email.dwbooster.com';
+    private $plugin_URL = 'https://form2email.dwbooster.com';
     protected $table_items = "cftemail_forms";
     private $table_messages = "cftemail_messages";
     private $print_counter = 1;
@@ -296,11 +296,11 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
     /* Code for the admin area */
 
     public function plugin_page_links($links) {
-        $customAdjustments_link = '<a href="http://form2email.dwbooster.com/download">'.__('Upgrade To Premium','contact-form-to-email').'</a>';
+        $customAdjustments_link = '<a href="https://form2email.dwbooster.com/download">'.__('Upgrade To Premium','contact-form-to-email').'</a>';
     	array_unshift($links, $customAdjustments_link);
         $settings_link = '<a href="admin.php?page='.$this->menu_parameter.'">'.__('Settings','contact-form-to-email').'</a>';
     	array_unshift($links, $settings_link);
-    	$help_link = '<a href="http://form2email.dwbooster.com/support">'.__('Documentation','contact-form-to-email').'</a>';
+    	$help_link = '<a href="https://form2email.dwbooster.com/support">'.__('Documentation','contact-form-to-email').'</a>';
     	array_unshift($links, $help_link);    	
     	$s_link = '<a href="https://wordpress.org/support/plugin/contact-form-to-email#new-post">'.__('Support','contact-form-to-email').'</a>';
     	array_unshift($links, $s_link);    	
@@ -336,17 +336,17 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         }
         else if ($this->get_param("page") == $this->menu_parameter.'_upgrade')
         {
-            echo("Redirecting to upgrade page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/download';</script>");
+            echo("Redirecting to upgrade page...<script type='text/javascript'>document.location='https://form2email.dwbooster.com/download';</script>");
             exit;
         }   
         else if ($this->get_param("page") == $this->menu_parameter.'_demo')
         {
-            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/home#demos';</script>");
+            echo("Redirecting to demo page...<script type='text/javascript'>document.location='https://form2email.dwbooster.com/home#demos';</script>");
             exit;
         } 
         else if ($this->get_param("page") == $this->menu_parameter.'_docs')
         {
-            echo("Redirecting to demo page...<script type='text/javascript'>document.location='http://form2email.dwbooster.com/documentation?open=1';</script>");
+            echo("Redirecting to demo page...<script type='text/javascript'>document.location='https://form2email.dwbooster.com/documentation?open=1';</script>");
             exit;
         } 
         else
@@ -363,6 +363,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             wp_enqueue_style('cfte-adminstyles', plugins_url('css/style.css', __FILE__) );
             wp_enqueue_style('cfte-admincalendarstyles', plugins_url('css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__) );
             wp_enqueue_style('jquery-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
+			if ($this->get_param("report") == '1')
+				wp_enqueue_script( $this->prefix.'_excanvas', plugins_url('/js/excanvas.min.js', __FILE__));
         }
         if( 'post.php' != $hook  && 'post-new.php' != $hook )
             return;
@@ -461,6 +463,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         // grab posted data
         //---------------------------
         $buffer = "";
+        $params = array();
         foreach ($_POST as $item => $value)
             if (isset($fields[str_replace($sequence,'',$item)]))
             {
@@ -500,7 +503,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         if (!$rows_affected)
         {
             echo 'Error saving data! Please try again.';            
-            echo '<br /><br />If the error persists  please be sure you are using the latest version and in that case contact support service at http://form2email.dwbooster.com/contact-us?debug=db';
+            echo '<br /><br />If the error persists  please be sure you are using the latest version and in that case contact support service at https://form2email.dwbooster.com/contact-us?debug=db';
             exit;
         }
 
@@ -572,7 +575,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
             $message = str_replace('<%fieldname'.$i.'%>',"",$message);  
         }
                 
-        $from = $this->get_option('fp_from_email', @CP_CFEMAIL_DEFAULT_fp_from_email);
+        $from = trim($this->get_option('fp_from_email', @CP_CFEMAIL_DEFAULT_fp_from_email));
         $to = explode(",",$this->get_option('fp_destination_emails', @CP_CFEMAIL_DEFAULT_fp_destination_emails));
         if ('html' == $this->get_option('fp_emailformat', CP_CFEMAIL_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
 
@@ -643,7 +646,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
         $verify_nonce = wp_verify_nonce( $_POST['rsave'], 'cfpoll_update_actions_post');
         if (!$verify_nonce)
         {
-            echo 'Error: Form cannot be authenticated. Please contact our <a href="http://form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
+            echo 'Error: Form cannot be authenticated. Please contact our <a href="https://form2email.dwbooster.com/contact-us">support service</a> for verification and solution. Thank you.';
             return;
         }
                 
@@ -719,8 +722,8 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
                               'cv_max_font_size' => $_POST['cv_max_font_size'],
                               'cv_noise' => $_POST['cv_noise'],
                               'cv_noise_length' => $_POST['cv_noise_length'],
-                              'cv_background' => $_POST['cv_background'],
-                              'cv_border' => $_POST['cv_border'],
+                              'cv_background' => str_replace('#','',$_POST['cv_background']),
+                              'cv_border' => str_replace('#','',$_POST['cv_border']),
                               'cv_text_enter_valid_captcha' => $_POST['cv_text_enter_valid_captcha']
     	                     )
                         , array( 'id' => $this->item ));
@@ -742,23 +745,7 @@ class CP_ContactFormToEmail extends CP_CFTEMAIL_BaseClass {
 
 
     function generateSafeFileName($filename) {
-        $filename = sanitize_file_name($filename);
-        $filename = strtolower(strip_tags($filename));
-        $filename = str_replace(";","_",$filename);
-        $filename = str_replace("#","_",$filename);
-        $filename = str_replace(" ","_",$filename);
-        $filename = str_replace("'","",$filename);
-        $filename = str_replace('"',"",$filename);
-        $filename = str_replace("__","_",$filename);
-        $filename = str_replace("&","and",$filename);
-        $filename = str_replace("/","_",$filename);
-        $filename = str_replace("\\","_",$filename);
-        $filename = str_replace("?","",$filename);
-        $filename = str_replace("%","_",$filename);
-        $filename = str_replace("=","_",$filename);
-        $filename = str_replace(">","",$filename);
-        $filename = str_replace("<","",$filename);
-        return $filename;
+        return sanitize_file_name($filename);
     }
 
     function export_csv ()

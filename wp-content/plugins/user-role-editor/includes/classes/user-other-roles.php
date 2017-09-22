@@ -12,7 +12,7 @@
 class URE_User_Other_Roles {
 
     protected $lib = null;
-    
+    private static $counter = 0;
     
     function __construct() {
     
@@ -36,6 +36,7 @@ class URE_User_Other_Roles {
         $multisite = $this->lib->get('multisite');
         if ($multisite) {          
             add_action( 'wpmu_activate_user', array($this, 'add_other_roles'), 10, 1 );
+            add_action( 'added_existing_user', array($this, 'add_other_roles'), 10, 1);
         }
         add_action( 'user_register', array($this, 'add_other_roles'), 10, 1 );
             
@@ -123,7 +124,7 @@ class URE_User_Other_Roles {
     // end of get_roles_array()    
     
 
-    private function roles_select_html($user) {
+    private function roles_select_html($user, $context) {
         
         global $wp_roles;
                 
@@ -133,24 +134,32 @@ class URE_User_Other_Roles {
         if (isset($roles[$primary_role])) { // exclude role assigned to the user as a primary role
             unset($roles[$primary_role]);
         }
-        $other_roles = $this->get_roles_array($user);
-                
-        echo '<select multiple="multiple" id="ure_select_other_roles" name="ure_select_other_roles" style="width: 500px;" >'."\n";
+        $button_number =  (self::$counter>0) ? '_2': '';                        
+        
+        echo '<select multiple="multiple" id="ure_select_other_roles'. $button_number .'" name="ure_select_other_roles" style="width: 500px;" >'."\n";
         foreach($roles as $key=>$role) {
             echo '<option value="'.$key.'" >'.$role['name'].'</option>'."\n";
         }   // foreach()
         echo '</select><br>'."\n";
-                
+        
+        if ($context=='add-new-user' || $context=='add-existing-user') {
+            // Get other default roles
+            $other_roles = $this->lib->get_option('other_default_roles', array());
+        } else {
+            $other_roles = $this->get_roles_array($user);
+        }
         if (is_array($other_roles) && count($other_roles) > 0) {
             $other_roles_str = implode(',', $other_roles);
         } else {
             $other_roles_str = '';
         }
-            echo '<input type="hidden" name="ure_other_roles" id="ure_other_roles" value="' . $other_roles_str . '" />';
+        echo '<input type="hidden" name="ure_other_roles" id="ure_other_roles'. $button_number .'" value="' . $other_roles_str . '" />';
         
         
         $output = $this->lib->roles_text($other_roles);        
-        echo '<span id="ure_other_roles_list">'. $output .'</span>';
+        echo '<span id="ure_other_roles_list'. $button_number .'">'. $output .'</span>';
+        
+        self::$counter++;
     }
     // end of roles_select()    
     
@@ -186,7 +195,7 @@ class URE_User_Other_Roles {
         			<th scope="row"><?php esc_html_e('Other Roles', 'user-role-editor'); ?></th>
         			<td>
 <?php
-            $this->roles_select_html($user);            
+            $this->roles_select_html($user, $context);            
 ?>
         			</td>
         		</tr>
@@ -254,13 +263,17 @@ class URE_User_Other_Roles {
         }
         if (!current_user_can('edit_user', $user_id)) {
             return false;
-        }
-        $user = get_userdata($user_id);
+        }        
 
-        if (empty($_POST['ure_other_roles'])) {
+        if (!isset($_POST['ure_other_roles'])) {    // add default other roles, there is no related data at the POST
             return false;
         }
         
+        if (empty($_POST['ure_other_roles'])) { // there is no need in other roles, user did not selected them
+            return true;
+        }
+        
+        $user = get_userdata($user_id);
         $data = explode(',', str_replace(' ', '', $_POST['ure_other_roles']));
         $ure_other_roles = array();
         foreach($data as $role_id) {
@@ -281,6 +294,13 @@ class URE_User_Other_Roles {
 
     
     private function add_default_other_roles($user_id) {
+        if (!current_user_can('edit_users')) {
+            return false;
+        }
+        if (!current_user_can('edit_user', $user_id)) {
+            return false;
+        }
+        
         $user = get_user_by('id', $user_id);
         if (empty($user->ID)) {
             return;
@@ -316,7 +336,6 @@ class URE_User_Other_Roles {
     }
     // end of add_other_roles()    
     
-    
-    
+        
 }
 // end of URE_User_Other_Roles class

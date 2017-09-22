@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Contact Form Email
-Plugin URI: http://form2email.dwbooster.com/download
+Plugin URI: https://form2email.dwbooster.com/download
 Description: Contact form that sends the data to email and also to a database list and CSV file.
-Version: 1.1.97
+Version: 1.2.12
 Author: CodePeople
-Author URI: http://form2email.dwbooster.com
+Author URI: https://form2email.dwbooster.com
 Text Domain: contact-form-to-email
 License: GPL
 */

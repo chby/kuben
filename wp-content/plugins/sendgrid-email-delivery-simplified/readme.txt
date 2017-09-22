@@ -3,8 +3,8 @@ Contributors: team-rs
 Donate link: http://sendgrid.com/
 Tags: email, email reliability, email templates, sendgrid, smtp, transactional email, wp_mail,email infrastructure, email marketing, marketing email, deliverability, email deliverability, email delivery, email server, mail server, email integration, cloud email
 Requires at least: 4.6
-Tested up to: 4.7
-Stable tag: 1.11.3
+Tested up to: 4.8
+Stable tag: 1.11.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ SendGrid settings can optionally be defined as global variables (wp-config.php):
     * Signup confirmation email subject: define('SENDGRID_MC_SIGNUP_EMAIL_SUBJECT', 'Confirm subscription');
     * Signup confirmation email content: define('SENDGRID_MC_SIGNUP_EMAIL_CONTENT', '&lt;a href="%confirmation_link%"&gt;click here&lt;/a&gt;');
     * Signup confirmation page ID: define('SENDGRID_MC_SIGNUP_CONFIRMATION_PAGE', 'page_id');
+
+4. Other configuration options:
+    * Set a custom timeout for API requests to SendGrid in seconds: define('SENDGRID_REQUEST_TIMEOUT', 10);
 
 = Filters =
 
@@ -232,6 +235,14 @@ Yes. Our plugin required special integration with BuddyPress and it's regularly 
 
 `define('SENDGRID_DISABLE_BUDDYPRESS', '1');`
 
+If you're trying to send plaintext emails using BuddyPress, keep in mind that by default the whitespace content of those emails is normalized.
+
+That means that some newlines might be missing if you expect them to be there.
+
+To disable this functionality, you need to add the following line in your wp-config.php file:
+
+`define('SENDGRID_DISABLE_BP_NORMALIZE_WHITESPACE', '1');`
+
 = Can I use shortcodes to customize the subscription confirmation page ? =
 
 Yes. You need to create custom page and select it from the settings page. You can place any of these shortcodes in the body of that page. Here's an example :
@@ -250,6 +261,32 @@ The settings for all sites in the network can be configured only by the Network 
 
 Since 1.10.5 the Network Admin can delegate the configuration for each subsite to their respective owners. This will allow any subsite to use it's own SendGrid Plugin configuration.
 
+= How can I further customize my emails? =
+
+When calling the wp_mail() function you can send a SendGrid PHP email object in the headers argument.
+
+Here is an example:
+
+`$email = new SendGrid\Email();
+$email
+    ->setFrom('me@bar.com')
+    ->setHtml('<strong>Hello World!</strong>')
+    ->addCategory('customCategory')
+;
+
+wp_mail('foo@bar.com', 'Subject goes here', 'Message goes here', $email);
+`
+
+You can find more examples here: https://github.com/sendgrid/sendgrid-php/blob/v4.0.2/README.md
+
+= My server is slow. Can I increate the timeout for API requests? =
+
+Yes. You can define a constant in your wp-config.php file like this:
+
+`define('SENDGRID_REQUEST_TIMEOUT', 10);`
+
+The value is in seconds, this means that API requests will wait 10 seconds for a reponse from the SendGrid API server until timing out.
+
 == Screenshots ==
 
 1. Go to Admin Panel, section Plugins and activate the SendGrid plugin. If you want to send emails through SMTP you need to install also the 'Swift Mailer' plugin.
@@ -266,6 +303,17 @@ Since 1.10.5 the Network Admin can delegate the configuration for each subsite t
 
 == Changelog ==
 
+= 1.11.7 =
+* Added a configuration parameter of API request timeout in seconds
+* Fixed an issue that made the HTML subscription emails break links
+= 1.11.6 =
+* Added a feature flag to disable whitespace normalization in BuddyPress plaintext emails
+* Fixed an issue where the from name and email subjects would incorrectly display the ampersand symbol
+= 1.11.5 =
+* Fixed a potential stored XSS issue on the backend settings form
+* Fixed a potential CSRF issue on the backend settings form
+= 1.11.4 =
+* Fixed an issue where TO field recipients could not see each other in the email header
 = 1.11.3 =
 * Fixed an issue where the send test form was displayed when no API key was set
 * Fixed an issue where the subscription test form was not displayed for the default contact list
@@ -438,6 +486,17 @@ Since 1.10.5 the Network Admin can delegate the configuration for each subsite t
 
 == Upgrade notice ==
 
+= 1.11.7 =
+* Added a configuration parameter of API request timeout in seconds
+* Fixed an issue that made the HTML subscription emails break links
+= 1.11.6 =
+* Added a feature flag to disable whitespace normalization in BuddyPress plaintext emails
+* Fixed an issue where the from name and email subjects would incorrectly display the ampersand symbol
+= 1.11.5 =
+* Fixed a potential stored XSS issue on the backend settings form
+* Fixed a potential CSRF issue on the backend settings form
+= 1.11.4 =
+* Fixed an issue where TO field recipients could not see each other in the email header
 = 1.11.3 =
 * Fixed an issue where the send test form was displayed when no API key was set
 * Fixed an issue where the subscription test form was not displayed for the default contact list

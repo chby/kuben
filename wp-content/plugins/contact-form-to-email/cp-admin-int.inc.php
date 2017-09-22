@@ -158,6 +158,10 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         {            
            var d=new Date();
            var f = document.cpformconf;    
+		   var cv_background = f.cv_background.value;
+		   cv_background = cv_background.replace('#','');
+		   var cv_border = f.cv_border.value;
+		   cv_border = cv_border.replace('#','');
            var qs = "&width="+f.cv_width.value;
            qs += "&height="+f.cv_height.value;
            qs += "&letter_count="+f.cv_chars.value;
@@ -165,8 +169,8 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
            qs += "&max_size="+f.cv_max_font_size.value;
            qs += "&noise="+f.cv_noise.value;
            qs += "&noiselength="+f.cv_noise_length.value;
-           qs += "&bcolor="+f.cv_background.value;
-           qs += "&border="+f.cv_border.value;
+           qs += "&bcolor="+cv_background;
+           qs += "&border="+cv_border;
            qs += "&font="+f.cv_font.options[f.cv_font.selectedIndex].value;
            qs += "&r="+(randcaptcha++);
            
@@ -202,7 +206,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
    
   <div style="border:1px dotted black;background-color:#ffffaa;padding-left:15px;padding-right:15px;padding-top:5px;width:740px;font-size:12px;color:#000000;"> 
    <p>The form builder supports 3 fields in this version: "Single Line Text", "Email" and "Text-area".</p>
-   <p>The full set of fields is available in the <a href="http://form2email.dwbooster.com/download">pro version</a>. The <a href="http://form2email.dwbooster.com/download">pro version</a> also supports:
+   <p>The full set of fields is available in the <a href="https://form2email.dwbooster.com/download">commercial versions</a>. The <a href="https://form2email.dwbooster.com/download">commercial versions</a> also supports:
    <ul>
     <li> - Dependand fields: Hide/show fields based in previous selections.</li>
     <li> - File uploads</li>
@@ -210,7 +214,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
     <li> - Publish it as a widget in the sidebar</li>
     <li> - ...and more fields and validations</li>
    </ul>
-   <p>There are also other plugins with similar features (not exactly the same features) but adding <a href="http://wordpress.org/extend/plugins/cp-contact-form-with-paypal/">the connection of the form to PayPal</a> or with <a href="http://wordpress.org/plugins/calculated-fields-form/">calculated fields</a>.</p>
+   <p>There are also other plugins with similar features (not exactly the same features) but adding <a href="https://wordpress.org/extend/plugins/cp-contact-form-with-paypal/">the connection of the form to PayPal</a> or with <a href="https://wordpress.org/plugins/calculated-fields-form/">calculated fields</a>.</p>
    </p>
    
   </div>
@@ -246,7 +250,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         <td colspan="2"> - The  <em>class="pbSubmit"</em> can be used to modify the button styles. <br />
         - The styles can be applied into any of the CSS files of your theme or into the CSS file <em>"contact-form-to-email\css\stylepublic.css"</em>. <br />
         - For further modifications the submit button is located at the end of the file <em>"cp-public-int.inc.php"</em>.<br />
-        - For general CSS styles modifications to the form and samples <a href="http://form2email.dwbooster.com/faq#q82" target="_blank">check this FAQ</a>.
+        - For general CSS styles modifications to the form and samples <a href="https://form2email.dwbooster.com/faq#q82" target="_blank">check this FAQ</a>.
         </tr>
      </table>
   </div>    
@@ -268,11 +272,11 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         </tr>
         <tr valign="top">
         <th scope="row">"is required" text:</th>
-        <td><input type="text" name="vs_text_is_required" size="40" value="<?php echo esc_attr($this->get_option('vs_text_is_required', CP_CFEMAIL_DEFAULT_vs_text_is_required)); ?>" /></td>
+        <td><input type="text" required name="vs_text_is_required" size="40" value="<?php echo esc_attr($this->get_option('vs_text_is_required', CP_CFEMAIL_DEFAULT_vs_text_is_required)); ?>" /></td>
         </tr>             
          <tr valign="top">
         <th scope="row">"is email" text:</th>
-        <td><input type="text" name="vs_text_is_email" size="70" value="<?php echo esc_attr($this->get_option('vs_text_is_email', CP_CFEMAIL_DEFAULT_vs_text_is_email)); ?>" /></td>
+        <td><input type="text" required name="vs_text_is_email" size="70" value="<?php echo esc_attr($this->get_option('vs_text_is_email', CP_CFEMAIL_DEFAULT_vs_text_is_email)); ?>" /></td>
         </tr>       
         <tr valign="top">
         <th scope="row">"is valid captcha" text:</th>
@@ -368,18 +372,18 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         
         <tr valign="top">
          <th scope="row">Width:</th>
-         <td><input type="text" name="cv_width" size="10" value="<?php echo esc_attr($this->get_option('cv_width', CP_CFEMAIL_DEFAULT_cv_width)); ?>"  onblur="generateCaptcha();"  /></td>
+         <td><input type="number" name="cv_width" size="10" value="<?php echo esc_attr($this->get_option('cv_width', CP_CFEMAIL_DEFAULT_cv_width)); ?>"  onblur="generateCaptcha();"  /></td>
          <th scope="row">Height:</th>
-         <td><input type="text" name="cv_height" size="10" value="<?php echo esc_attr($this->get_option('cv_height', CP_CFEMAIL_DEFAULT_cv_height)); ?>" onblur="generateCaptcha();"  /></td>
+         <td><input type="number" name="cv_height" size="10" value="<?php echo esc_attr($this->get_option('cv_height', CP_CFEMAIL_DEFAULT_cv_height)); ?>" onblur="generateCaptcha();"  /></td>
          <th scope="row">Chars:</th>
-         <td><input type="text" name="cv_chars" size="10" value="<?php echo esc_attr($this->get_option('cv_chars', CP_CFEMAIL_DEFAULT_cv_chars)); ?>" onblur="generateCaptcha();"  /></td>
+         <td><input type="number" name="cv_chars" size="10" value="<?php echo esc_attr($this->get_option('cv_chars', CP_CFEMAIL_DEFAULT_cv_chars)); ?>" onblur="generateCaptcha();"  /></td>
         </tr>             
 
         <tr valign="top">
          <th scope="row">Min font size:</th>
-         <td><input type="text" name="cv_min_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_min_font_size', CP_CFEMAIL_DEFAULT_cv_min_font_size)); ?>" onblur="generateCaptcha();"  /></td>
+         <td><input type="number" name="cv_min_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_min_font_size', CP_CFEMAIL_DEFAULT_cv_min_font_size)); ?>" onblur="generateCaptcha();"  /></td>
          <th scope="row">Max font size:</th>
-         <td><input type="text" name="cv_max_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_max_font_size', CP_CFEMAIL_DEFAULT_cv_max_font_size)); ?>" onblur="generateCaptcha();"  /></td>        
+         <td><input type="number" name="cv_max_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_max_font_size', CP_CFEMAIL_DEFAULT_cv_max_font_size)); ?>" onblur="generateCaptcha();"  /></td>        
          <td colspan="2" rowspan="">
            Preview:<br />
              <br />
@@ -390,17 +394,17 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
 
         <tr valign="top">
          <th scope="row">Noise:</th>
-         <td><input type="text" name="cv_noise" size="10" value="<?php echo esc_attr($this->get_option('cv_noise', CP_CFEMAIL_DEFAULT_cv_noise)); ?>" onblur="generateCaptcha();" /></td>
+         <td><input type="number" name="cv_noise" size="10" value="<?php echo esc_attr($this->get_option('cv_noise', CP_CFEMAIL_DEFAULT_cv_noise)); ?>" onblur="generateCaptcha();" /></td>
          <th scope="row">Noise Length:</th>
-         <td><input type="text" name="cv_noise_length" size="10" value="<?php echo esc_attr($this->get_option('cv_noise_length', CP_CFEMAIL_DEFAULT_cv_noise_length)); ?>" onblur="generateCaptcha();" /></td>        
+         <td><input type="number" name="cv_noise_length" size="10" value="<?php echo esc_attr($this->get_option('cv_noise_length', CP_CFEMAIL_DEFAULT_cv_noise_length)); ?>" onblur="generateCaptcha();" /></td>        
         </tr>          
         
 
         <tr valign="top">
          <th scope="row">Background:</th>
-         <td><input type="text" name="cv_background" size="10" value="<?php echo esc_attr($this->get_option('cv_background', CP_CFEMAIL_DEFAULT_cv_background)); ?>" onblur="generateCaptcha();" /></td>
+         <td><input type="color" name="cv_background" size="10" value="#<?php echo esc_attr($this->get_option('cv_background', CP_CFEMAIL_DEFAULT_cv_background)); ?>" onchange="generateCaptcha();" /></td>
          <th scope="row">Border:</th>
-         <td><input type="text" name="cv_border" size="10" value="<?php echo esc_attr($this->get_option('cv_border', CP_CFEMAIL_DEFAULT_cv_border)); ?>" onblur="generateCaptcha();" /></td>        
+         <td><input type="color" name="cv_border" size="10" value="#<?php echo esc_attr($this->get_option('cv_border', CP_CFEMAIL_DEFAULT_cv_border)); ?>" onchange="generateCaptcha();" /></td>        
         </tr>    
         
         <tr valign="top">
@@ -436,7 +440,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && isset( $_POST[$this->prefix.'_post_
         </tr>
         <tr valign="top">
         <th scope="row">Send report every</th>
-        <td><input type="text" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '7')); ?>" /> days</td>
+        <td><input type="number" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '7')); ?>" /> days</td>
         </tr>        
         <tr valign="top">
         <th scope="row">Send report after this hour (server time)</th>

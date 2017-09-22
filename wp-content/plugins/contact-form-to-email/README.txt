@@ -1,6 +1,6 @@
 === Contact Form Email ===
 Contributors: codepeople
-Donate link: http://form2email.dwbooster.com/download
+Donate link: https://form2email.dwbooster.com/download
 Tags: contact form,contact,email,contact form database,form,contact form excel,form to email,form to database,contact form builder,form to csv,form to excel,contact form csv
 Requires at least: 3.0.5
 Tested up to: 4.8
@@ -46,7 +46,7 @@ In addition to that basic feature it also **saves the contact form data into a d
 
  = Contact Form to Email - More features = 
  
- There are also commercial versions of the Contact Form to Email with other features not listed here that can be get at http://form2email.dwbooster.com/download
+ There are also commercial versions of the Contact Form to Email with other features not listed here that can be get at https://form2email.dwbooster.com/download
 
 = Contact Form to Email Messages List =
 
@@ -349,7 +349,7 @@ The styles can be applied into any of the CSS files of your theme or into the CS
 
 For further modifications the submit button is located at the end of the file "cp-public-int.inc.php".
 
-For general CSS styles modifications to the form and samples check this FAQ entry: http://form2email.dwbooster.com/faq#q82
+For general CSS styles modifications to the form and samples check this FAQ entry: https://form2email.dwbooster.com/faq#q82
 
 
 = Customizing the automatic email reports =  
@@ -431,6 +431,37 @@ When you click a field already added into the contact form builder area, you can
 6. Built-in captcha image anti-spam protection
 
 == Changelog ==
+
+= 1.2.12 =
+* Simpler filename sanitization
+
+= 1.2.11 =
+* Fixed initialization bug
+
+= 1.2.10 =
+* Improved messages list and print option
+
+= 1.2.09 =
+* Filename sanitization
+
+= 1.2.08 =
+* Validation updates
+
+= 1.2.07 =
+* Sanitization of "from" email address
+
+= 1.2.06 =
+* Moved plugin website and links to SSL
+
+= 1.2.05 =
+* Fixed bug on color selectors for captcha images
+
+= 1.1.99 =
+* Accessibility updates
+
+= 1.1.98 =
+* Fixed bugs to report graphics
+* Improvements to scripts loading
 
 = 1.1.97 =
 * Removed used of deprecated mysql_ functions
@@ -750,6 +781,6 @@ When you click a field already added into the contact form builder area, you can
 
 == Upgrade Notice ==
 
-= 1.1.97 =
-* Removed used of deprecated mysql_ functions
+= 1.2.12 =
+* Simpler filename sanitization
 
